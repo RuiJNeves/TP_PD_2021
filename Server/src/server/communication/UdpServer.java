@@ -51,17 +51,19 @@ public class UdpServer {
                 oin = new ObjectInputStream(bin);
                 
                 //log = (Login)oin.readObject();
+                receivedMsg = (String)oin.readObject();
+
+                if(receivedMsg == "connect"){
+                //System.out.println("Recebido \"" /*+ log.toString()*/ + "\" de " +packet.getAddress().getHostAddress() + ":" + packet.getPort());
                 
-                System.out.println("Recebido \"" /*+ log.toString()*/ + "\" de " + 
-                    packet.getAddress().getHostAddress() + ":" + packet.getPort());
-                
-                bout = new ByteArrayOutputStream();
-                oout = new ObjectOutputStream(bout);
-                oout.writeObject(t);
-                
-                packet.setData(bout.toByteArray());
-                packet.setLength(bout.size());
-                socket.send(packet);
+                    bout = new ByteArrayOutputStream();
+                    oout = new ObjectOutputStream(bout);
+                    oout.writeObject(t);
+                    
+                    packet.setData(bout.toByteArray());
+                    packet.setLength(bout.size());
+                    socket.send(packet);
+                }
             }
             
         }catch(NumberFormatException e){
