@@ -5,6 +5,7 @@
  */
 package client.Logic.Communication.UDP;
 
+import Helpers.ConnectionResponse;
 import java.io.*;
 import java.net.*;
 
@@ -15,6 +16,7 @@ import java.net.*;
 public class UDPCommunicationClient {
     private final static int TIMEOUT = 10;
     private final static int SIZE = 500;
+    private final static String CON = "connect";
     
     private DatagramSocket ds;
     private DatagramPacket dpIn, dpOut;
@@ -30,12 +32,12 @@ public class UDPCommunicationClient {
     
     private boolean sendable;
     
-    public UDPCommunicationClient(String addr, int port){
+    public UDPCommunicationClient(InetAddress addr, int port){
         try{
             bout = new ByteArrayOutputStream();
             oout = new ObjectOutputStream(bout);
             
-            serverAddress = InetAddress.getByName(addr);
+            serverAddress = addr;
             serverPort = port;
             
             ds = new DatagramSocket();
@@ -61,24 +63,51 @@ public class UDPCommunicationClient {
         }
     }
     
-    public boolean sendContent(){
-        try{
-            ds.send(dpOut);
-            dpIn = new DatagramPacket(new byte[SIZE], SIZE);
-            
-            ds.receive(dpIn);
-            bin = new ByteArrayInputStream(dpIn.getData(), 0, dpIn.getLength());
-            oin = new ObjectInputStream(bin);
-            
-            boolean response = (boolean)oin.readObject();
-            sendable = false;
-            return response;
-        }catch(Exception e){
-            System.out.println("Erro");
-            sendable = false;
+     public boolean sendContent(){
+        if(sendable){
+            try{
+                ds.send(dpOut);
+                dpIn = new DatagramPacket(new byte[SIZE], SIZE);
+
+                ds.receive(dpIn);
+                bin = new ByteArrayInputStream(dpIn.getData(), 0, dpIn.getLength());
+                oin = new ObjectInputStream(bin);
+
+                boolean response = (boolean)oin.readObject();
+                sendable = false;
+                return response;
+            }catch(Exception e){
+                System.out.println("Erro");
+                sendable = false;
+                return false;
+            }
+        }else
             return false;
-        }
     }
+    
+    public ConnectionResponse sendConnection(){
+        if(!sendable){
+            setContent(CON);
+            try{
+                ds.send(dpOut);
+                dpIn = new DatagramPacket(new byte[SIZE], SIZE);
+
+                ds.receive(dpIn);
+                bin = new ByteArrayInputStream(dpIn.getData(), 0, dpIn.getLength());
+                oin = new ObjectInputStream(bin);
+
+                ConnectionResponse response = (ConnectionResponse)oin.readObject();
+                sendable = false;
+                return response;
+            }catch(Exception e){
+                System.out.println("Erro");
+                sendable = false;
+                return null;
+            }
+        }else
+            return null;
+    }
+         
     
     public void close(){
         ds.close();

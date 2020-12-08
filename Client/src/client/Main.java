@@ -6,6 +6,7 @@ package client;
  * and open the template in the editor.
  */
 
+import client.Logic.Communication.ComsLogic;
 import client.UI.Text.TextInterface;
 
 /**
@@ -18,8 +19,23 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        TextInterface i = new TextInterface();
-        i.run();
+         ComsLogic l;
+        if(args.length < 2){
+            System.out.println("Sintaxe inválida! Indique IP e PORTO do servidor");
+        }else{
+            System.out.println("A conectar...");
+           
+            l = new ComsLogic();
+            
+            switch(l.connect(args[0], args[1])){
+                case 0 -> System.out.println("Impossivel connectar! Lamentamos... Tente mais tarde");
+                case 1 -> {
+                    TextInterface i = new TextInterface();
+                    i.run();
+                    System.out.println("Connectado");
+                 }
+                default -> System.out.println("Ocorreu um erro inesperado! Tente outra vez!");
+            } 
+        }   
     }
-    
 }
