@@ -5,11 +5,19 @@
  */
 package client.Logic.Communication;
 
+import Features.Login;
+import Features.User;
 import Helpers.ConnectionResponse;
 import client.Logic.Communication.UDP.UDPCommunicationClient;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -17,7 +25,11 @@ import java.util.List;
  */
 public class ComsLogic {
     
-
+    public final static int TIMEOUT = 10;
+    
+    private static Socket tcpSocket = null;
+    private ObjectInputStream oin;
+    private ObjectOutputStream oout;
     
     public ComsLogic(){}
     
@@ -34,11 +46,12 @@ public class ComsLogic {
             InetAddress addr = InetAddress.getByName(address);
             int p = Integer.parseInt(port);
             ConnectionResponse r = con(addr, p, com);
-            if(r.isResp())
+            if(r.isResp()){
+                tcpConnect(addr, r.getPort());
                 return 1;
-            else
+            }else
                 return retry(r);
-        }catch(NumberFormatException | UnknownHostException e){
+        }catch(IOException | NumberFormatException e){
             return -1;
         }finally{
             if(com != null)
@@ -54,8 +67,11 @@ public class ComsLogic {
             try{
                 int p = r.getServerList().get(i);
                 com = new UDPCommunicationClient(i, p);
-                if(con(i, p,com).isResp())
+                ConnectionResponse rsp = con(i, p,com);
+                if(rsp.isResp()){
+                    tcpConnect(i, rsp.getPort());
                     return 1;
+                }
                 
             }catch(Exception e){
                 return -1;
@@ -68,10 +84,29 @@ public class ComsLogic {
         return 0;
     }
     
-    
     private ConnectionResponse con(InetAddress addr, int p, UDPCommunicationClient com) throws UnknownHostException{
         
         com = new UDPCommunicationClient(addr, p);
         return com.sendConnection();
+    }
+    
+    private void tcpConnect(InetAddress server, int port) throws IOException {
+        tcpSocket = new Socket(server, port);
+        tcpSocket.setSoTimeout(TIMEOUT*1000);
+    }
+    
+    public User login(Login l){
+        User resp;
+        try {
+            oin = new ObjectInputStream(tcpSocket.getInputStream());
+            oout = new ObjectOutputStream(tcpSocket.getOutputStream());
+            
+            oout.writeObject(l);
+            oout.flush();
+            resp = (User)oin.readObject();
+            return resp;
+        } catch (IOException | ClassNotFoundException ex) {
+            return null;
+        }
     }
 }

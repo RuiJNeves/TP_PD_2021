@@ -30,7 +30,7 @@ public class Main {
             switch(l.connect(args[0], args[1])){
                 case 0 -> System.out.println("Impossivel connectar! Lamentamos... Tente mais tarde");
                 case 1 -> {
-                    TextInterface i = new TextInterface();
+                    TextInterface i = new TextInterface(l);
                     i.run();
                     System.out.println("Connectado");
                  }

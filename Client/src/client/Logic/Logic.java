@@ -7,6 +7,9 @@ package client.Logic;
 
 import Features.Message;
 import client.Logic.Communication.TCP.TCPFileHandler;
+import Features.Login;
+import Features.User;
+import client.Logic.Communication.ComsLogic;
 import java.io.File;
 import java.net.Socket;
 
@@ -16,16 +19,21 @@ import java.net.Socket;
  */
 public class Logic {
     
-    private final String currentUser;
+    private User currentUser;
     private TCPFileHandler tcpFHan;
+    private ComsLogic cl;
+    private boolean isLogged;
     
-    public Logic(String user){
-        currentUser = user;
+    public Logic(ComsLogic cl){
         tcpFHan = new TCPFileHandler(new Socket());
+        this.cl = cl;
+        isLogged = false;
     }
      
     public void sendMsg(String rcv,String msg){
-        Message m = new Message(currentUser, rcv, msg);
+        Message m;
+        if(isLogged)
+            m = new Message(currentUser.getNome(), rcv, msg);
         
     }
 
@@ -35,5 +43,12 @@ public class Logic {
         File f = new File(dir);
         tcpFHan.setDirectoryToSend(f);
         tcpFHan.send();
+    }
+
+    public boolean login(Login log) {
+        User r = cl.login(log);
+        if(r != null)
+            currentUser = r;
+        return r != null;
     }
 }

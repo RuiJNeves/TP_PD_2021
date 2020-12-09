@@ -5,6 +5,8 @@
  */
 package client.UI.Text;
 import client.Logic.Logic;
+import Features.Login;
+import client.Logic.Communication.ComsLogic;
 import java.util.Scanner;
 
 /**
@@ -17,12 +19,15 @@ public class TextInterface {
                                     "Editar Canal", "Eliminar Canal", "Listar Canais/Utilizadores","Estatisticas"};
     private final Scanner s;
     private Logic l;
-    public TextInterface(){
+    
+    public TextInterface(ComsLogic cl){
         s = new Scanner(System.in);
-        l = new Logic("Rui");
+        l = new Logic(cl);
     }
     
     public void run(){
+        
+        login();
         int opt;
         do{
             opt = writeMenu(MENU);
@@ -41,6 +46,10 @@ public class TextInterface {
     
     private int readInt(){
         return s.nextInt();
+    }
+    
+    private String readString(){
+        return s.nextLine();
     }
     
     private void computeOption(int o){
@@ -102,5 +111,15 @@ public class TextInterface {
 
     private void stats() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    private boolean login() {
+        System.out.println("Login");
+        System.out.println("Username: ");
+        String nome = readString();
+        System.out.println("Password: ");
+        String pass = readString();
+        Login log = new Login(nome, pass);
+        return l.login(log);
     }
 }
