@@ -15,6 +15,7 @@ import java.net.*;
  * @author Hugo
  */
 public class Main {
+    
     public static final int MAX_SIZE = 1000;
     /**
      * @param args the command line arguments

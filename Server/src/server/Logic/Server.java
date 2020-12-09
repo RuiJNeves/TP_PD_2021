@@ -37,7 +37,7 @@ public class Server{
 	nClientes++;
     }
 
-    public int percentagem(int lotacao){
-	return nClientes*100/lotacao;
+    public int getClientes(){
+	return nClientes;
     }
 }
