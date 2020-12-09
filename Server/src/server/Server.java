@@ -1,5 +1,7 @@
 package server;
 
+import java.net.InetAddress;
+
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -12,7 +14,7 @@ package server;
  * @author Hugo
  */
 public class Server{
-    int port
+    int port;
     InetAddress addr;
     int nClientes;
     /**
