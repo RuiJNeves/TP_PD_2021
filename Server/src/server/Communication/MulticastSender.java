@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server.communication;
-import Commons.
+package server.Communication;
+
+
+import interfaces.ISendable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -38,29 +40,30 @@ public class MulticastSender extends Thread{
     public void run(){
         try {
             s.joinGroup(group);
+            while(true){
+                dgram = new DatagramPacket(sendable.getContent().getBytes(),sendable.getContent().length(),group,s.getPort());
+                try {
+                    s.send(dgram);
+                } catch (IOException ex) {
+                    Logger.getLogger(MulticastSender.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            
         } catch (IOException ex) {
             Logger.getLogger(MulticastSender.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            while(true){
-                dgram = new DatagramPacket(sendable.getBytes(),sendable.length(),group,s.getPort());
-            try {
-                s.send(dgram);
-            } catch (IOException ex) {
-                Logger.getLogger(MulticastSender.class.getName()).log(Level.SEVERE, null, ex);
-            }
-                
-            
             
         }finally{
-            
-            if(t != null){
-                t.terminate();
-            }
             
             if(s != null){
                 s.close();
             }
             
+        
+        
+                
+            
+            
+        
             //t.join(); //Para esperar que a thread termine caso esteja em modo daemon
             
         }

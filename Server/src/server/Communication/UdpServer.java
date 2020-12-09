@@ -1,4 +1,4 @@
-package server.communication;
+package server.Communication;
 
 
 
@@ -31,7 +31,7 @@ public class UdpServer {
     
     
     /*Recebe o porto*/
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ClassNotFoundException {
                
         if(args.length!=1){ 
             System.out.println("Sintaxe: java UdpTimeServer_v2 listeningPort");
