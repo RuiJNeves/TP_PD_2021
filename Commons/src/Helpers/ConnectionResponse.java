@@ -16,10 +16,12 @@ public class ConnectionResponse {
     
     private boolean resp;
     private HashMap<InetAddress, Integer> serverList;
+    private int tcpPort;
     
-    public ConnectionResponse(boolean r, HashMap m){
+    public ConnectionResponse(boolean r, HashMap m, int port){
         resp = r;
         serverList = m;
+        tcpPort = port;
     }
 
     public boolean isResp() {
@@ -30,6 +32,14 @@ public class ConnectionResponse {
         this.resp = resp;
     }
 
+    public int getPort() {
+        return tcpPort;
+    }
+
+    public void setPort(int port) {
+        tcpPort = port;
+    }
+    
     public HashMap<InetAddress, Integer> getServerList() {
         return serverList;
     }
