@@ -1,4 +1,4 @@
-package server;
+package server.Logic;
 
 import java.net.InetAddress;
 
@@ -17,10 +17,9 @@ public class Server{
     int port;
     InetAddress addr;
     int nClientes;
-    /**
-     * @param args the command line arguments
-     */
-    public static void Server(int port, InetAddress addr){
+    
+    
+    public Server(int port, InetAddress addr){
         this.port = port;
 	this.addr = addr;
 	nClientes = 0;
@@ -38,7 +37,7 @@ public class Server{
 	nClientes++;
     }
 
-    public int percentagem(int lotacao){
-	return nClientes*100/lotacao;
+    public int getClientes(){
+	return nClientes;
     }
 }

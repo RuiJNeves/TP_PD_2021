@@ -1,7 +1,8 @@
-package server.communication;
+package server.Communication;
 
 
 
+import Helpers.ConnectionResponse;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -9,20 +10,23 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.HashMap;
+import server.Logic.ListServer;
+import server.Logic.Server;
 
 /**
  *
  * @author Hugo
  */
 public class UdpServer {
-    
+    private static int tcpPort;
     public static int MAX_SIZE = 1000;
     
-    private static  int listeningPort;
     private static DatagramSocket socket = null;
     private static DatagramPacket packet;
     private static String receivedMsg;
-    //Login log = null;
+
     private static  ByteArrayInputStream bin;
     private static  ObjectInputStream oin;
     private static  boolean t = true; //teste
@@ -30,18 +34,16 @@ public class UdpServer {
     private static  ObjectOutputStream oout;
     
     
+    public UdpServer(Server s) {
+        this.tcpPort = port;
+        
+    }
+        
     /*Recebe o porto*/
-    public static void main(String[] args) throws IOException {
-               
-        if(args.length!=1){ 
-            System.out.println("Sintaxe: java UdpTimeServer_v2 listeningPort");
-            return;
-        }
+    public void ListentUDP(int lp) throws IOException, ClassNotFoundException {
         
         try{
-            listeningPort = Integer.parseInt(args[0]);
-            socket = new DatagramSocket(listeningPort);
-            System.out.println("UDP Time Server Started...");
+            socket = new DatagramSocket(lp);
             
             while(true){
                 packet = new DatagramPacket(new byte[MAX_SIZE], MAX_SIZE);
@@ -53,13 +55,23 @@ public class UdpServer {
                 //log = (Login)oin.readObject();
                 receivedMsg = (String)oin.readObject();
 
-                if(receivedMsg == "connect"){
-                //System.out.println("Recebido \"" /*+ log.toString()*/ + "\" de " +packet.getAddress().getHostAddress() + ":" + packet.getPort());
+                bout = new ByteArrayOutputStream();
+                oout = new ObjectOutputStream(bout);
                 
-                    bout = new ByteArrayOutputStream();
-                    oout = new ObjectOutputStream(bout);
-                    oout.writeObject(t);
-                    
+                if(receivedMsg.equals("connect")){
+                    ListServer.ordena();
+                    if(ListServer.listServer.get(0).getClientes() * 100 /  < 50){
+                        
+                        HashMap map = new HashMap<InetAddress, Integer>();
+                        for( Server s : ListServer.listServer){
+                            map.put(s.getAddress(), s.getPort());
+                        }
+                        
+                        oout.writeObject(new ConnectionResponse(false, map, -1));
+                        
+                    }else{
+                        oout.writeObject(new ConnectionResponse(true, null, tcpPort));
+                    }
                     packet.setData(bout.toByteArray());
                     packet.setLength(bout.size());
                     socket.send(packet);
@@ -70,5 +82,8 @@ public class UdpServer {
             System.out.println("O porto de escuta deve ser um inteiro positivo.");
         }
     }
+    
+
+
     
 }

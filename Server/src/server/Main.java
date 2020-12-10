@@ -1,4 +1,4 @@
-package server;
+
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -6,8 +6,8 @@ package server;
  * and open the template in the editor.
  */
 
+import Logic.Communication.TcpFileHandler;
 import java.io.*;
-import server.communication.*;
 import java.net.*;
 
 /**
@@ -15,6 +15,7 @@ import java.net.*;
  * @author Hugo
  */
 public class Main {
+    
     public static final int MAX_SIZE = 1000;
     /**
      * @param args the command line arguments

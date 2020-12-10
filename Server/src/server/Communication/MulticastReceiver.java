@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package server.communication;
+package server.Communication;
 
+import interfaces.ISendable;
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.MulticastSocket;
@@ -52,8 +53,8 @@ public class MulticastReceiver extends Thread{
                 msg = new String(pkt.getData(), 0, pkt.getLength());
                 
                 if(msg.toUpperCase().contains(List.toUpperCase())){
-                    pkt.setData(sendable.getBytes());
-                    pkt.setLength(sendable.length());               
+                    pkt.setData(sendable.getContent().getBytes());
+                    pkt.setLength(sendable.getContent().length());               
                     s.send(pkt);
                 }
                 System.out.println();
