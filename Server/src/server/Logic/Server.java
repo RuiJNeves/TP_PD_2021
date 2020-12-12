@@ -49,4 +49,6 @@ public class Server implements IServerSendable{
     public void prepareCheck(){
         check = false;
     }
+    
+    
 }

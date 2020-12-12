@@ -13,11 +13,15 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
+import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.Logic.IServerSendable;
 import server.Logic.ListServer;
 import static server.Logic.ListServer.listServer;
+import server.Logic.PingRequest;
+import server.Logic.PingResponse;
 import server.Logic.Server;
 
 /**
@@ -25,18 +29,19 @@ import server.Logic.Server;
  * @author Hugo
  */
 public class MulticastReceiver extends Thread{
+    final static int PORT= 5432;
     public static final String List = "LIST";
     public static final int MAX = 1000;
     protected Server server;
     protected ISendable sendable;
     protected MulticastSocket s = null;
-    protected boolean running = false;
+    protected boolean running;
     
     public MulticastReceiver(ISendable sendable, MulticastSocket s, Server server){
         this.sendable = sendable;
         this.s = s;
         this.server = server;
-        running = true;
+        running = false;
         
     }
     
@@ -49,7 +54,7 @@ public class MulticastReceiver extends Thread{
         DatagramPacket pkt = null;
         ObjectInputStream in;
         ISendable sendable;
-         Message msg;
+        Message msg;
         Object obj;
         ByteArrayOutputStream buff;
         ObjectOutputStream out;   
@@ -58,7 +63,7 @@ public class MulticastReceiver extends Thread{
         }
         try{
             
-            while(running){
+            while(running){ 
                 
                 
                 pkt = new DatagramPacket(new byte[MAX], MAX);
@@ -78,16 +83,22 @@ public class MulticastReceiver extends Thread{
                         if(!listServer.contains(server))
                             listServer.add(server);
                         
-                    }else if(obj instanceof String){
+                    }else if(obj instanceof PingRequest){
                         
                         //thread que envia o ping tb apaga os "Mortos"
-                        String ping = (String) obj;
-                        if(ping.toUpperCase().equals("PING")){
-                            for (Server s_server : listServer){
-                                if(s_server.getAddress() == pkt.getAddress())
-                                    s_server.stillAlive();
+                        PingRequest request = (PingRequest) obj;
+                        MulticastSender ms = MulticastSender(new PingResponse(myServer.getAddress()), null, s, InetAddress.getByName("230.30.30.30") );
+                        ms.run();
+                        
+                    }else if(obj instanceof PingResponse){
+                        
+                        PingResponse response = (PingResponse) obj;
+                        for(Server s : listServer){
+                            if( s.getAddress()  == response.getAddress()){
+                                s.stillAlive();
                             }
                         }
+                        
                     }//ver restantes
                     
                 } catch (ClassNotFoundException ex) {

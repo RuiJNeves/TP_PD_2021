@@ -3,15 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Logic.Communication;
+package server.Communication;
 
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.net.SocketException;
 /**
@@ -33,31 +36,38 @@ public class TcpFileReceiver implements Runnable{
     
     @Override
     public void run() {
-        InputStream in;
-        FileOutputStream out;
-        String requestFileName, requestCanonicalFilePath = null;
+        BufferedReader in;
+        OutputStream out;
+        FileOutputStream fout;
+        String requestCanonicalFilePath = null;
         FileInputStream requestFileInputStream = null;
         
         byte []fileChunk = new byte[MAX_SIZE];
         int nbytes;
         try{
-            socketToClient.setSoTimeout(TIMEOUT *1000);
-            in = socketToClient.getInputStream();
-                                                
-            requestCanonicalFilePath = new File(localDirectory + File.separator + fileName).getCanonicalPath();
-            
+            socketToClient.setSoTimeout(TIMEOUT*1000);
+            in = new BufferedReader(new InputStreamReader(socketToClient.getInputStream()));
+
+            out = socketToClient.getOutputStream();
+
+            requestedFileName = in.readLine();
+
+            //System.out.println("Recebido pedido para \"" + requestCanonicalFilePath + "\" de " + socketToClient.getInetAddress().getHostName() + ":" + socketToClient.getPort());
+
+            requestCanonicalFilePath = new File(localDirectory+File.separator+fileName).getCanonicalPath();
+
             if(!requestCanonicalFilePath.startsWith(localDirectory.getCanonicalPath()+File.separator)){
                 System.out.println("Nao e' permitido aceder ao ficheiro " + requestCanonicalFilePath + "!");
                 System.out.println("A directoria de base nao corresponde a " + localDirectory.getCanonicalPath()+"!");
                 return;
             }
-                        
-            System.out.println("Ficheiro " + requestCanonicalFilePath + " aberto para leitura.");
-            out = new FileOutputStream(requestCanonicalFilePath);
 
-            while((nbytes = in.read(fileChunk)) >0){
-                out.write(fileChunk,0,nbytes);
-                System.out.println(fileChunk);
+            requestFileInputStream = new FileInputStream(requestCanonicalFilePath);
+
+            //System.out.println("Ficheiro " + requestCanonicalFilePath + " aberto para leitura.");
+
+            while((nbytes = requestFileInputStream.read(fileChunk)) > 0){
+                out.write(fileChunk, 0, nbytes);
             }
             
             System.out.println("Transferencia concluida");
