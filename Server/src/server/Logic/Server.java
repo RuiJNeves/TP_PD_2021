@@ -13,10 +13,11 @@ import java.net.InetAddress;
  *
  * @author Hugo
  */
-public class Server{
+public class Server implements IServerSendable{
     int port;
     InetAddress addr;
     int nClientes;
+    boolean check = false;
     
     
     public Server(int port, InetAddress addr){
@@ -39,5 +40,13 @@ public class Server{
 
     public int getClientes(){
 	return nClientes;
+    }
+
+    public void stillAlive() {
+        check = true;
+    }
+    
+    public void prepareCheck(){
+        check = false;
     }
 }

@@ -13,6 +13,14 @@ import java.util.List;
  * @author Hugo
  */
 public class TcpServer {
-    int port;
     List<User> list ;
+    
+    public boolean removeUser(User user){
+        return list.remove(user);
+    }
+    
+    public void addUser(User user){
+        list.add(user);
+    }
+    
 }

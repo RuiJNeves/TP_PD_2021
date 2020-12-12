@@ -7,23 +7,21 @@ package server.Communication;
 
 
 import interfaces.ISendable;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 /**
  *
  * @author Hugo
  */
 public class MulticastSender extends Thread{
+    final static int PORT= 5432;
+    boolean running = true;
     DatagramPacket dgram;
     protected InetAddress group;
     protected ISendable sendable;
@@ -36,11 +34,16 @@ public class MulticastSender extends Thread{
         
     }
     
+    public void terminate()
+    {                
+        running = false;
+    }
+    
     @Override
     public void run(){
         try {
             s.joinGroup(group);
-            while(true){
+            while(running){
                 dgram = new DatagramPacket(sendable.getContent().getBytes(),sendable.getContent().length(),group,s.getPort());
                 try {
                     s.send(dgram);

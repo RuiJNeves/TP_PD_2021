@@ -20,7 +20,7 @@ import server.Logic.Server;
  * @author Hugo
  */
 public class UdpServer {
-    private static int tcpPort;
+    Server server;
     public static int MAX_SIZE = 1000;
     
     private static DatagramSocket socket = null;
@@ -35,7 +35,7 @@ public class UdpServer {
     
     
     public UdpServer(Server s) {
-        this.tcpPort = port;
+        server = s;
         
     }
         
@@ -60,7 +60,7 @@ public class UdpServer {
                 
                 if(receivedMsg.equals("connect")){
                     ListServer.ordena();
-                    if(ListServer.listServer.get(0).getClientes() * 100 /  < 50){
+                    if((ListServer.listServer.get(0).getClientes() * 100 / server.getClientes())  < 50){
                         
                         HashMap map = new HashMap<InetAddress, Integer>();
                         for( Server s : ListServer.listServer){
@@ -70,7 +70,7 @@ public class UdpServer {
                         oout.writeObject(new ConnectionResponse(false, map, -1));
                         
                     }else{
-                        oout.writeObject(new ConnectionResponse(true, null, tcpPort));
+                        oout.writeObject(new ConnectionResponse(true, null, server.getPort()));
                     }
                     packet.setData(bout.toByteArray());
                     packet.setLength(bout.size());
