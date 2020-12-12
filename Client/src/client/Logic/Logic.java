@@ -18,48 +18,65 @@ import java.util.List;
  * @author ruizi
  */
 public class Logic {
-    
+
     private User currentUser;
-    private TCPFileHandler tcpFHan;
     private ComsLogic cl;
     private boolean isLogged;
-    
-    public Logic(ComsLogic cl){
-        tcpFHan = new TCPFileHandler(new Socket());
+
+    public Logic(ComsLogic cl) {
         this.cl = cl;
         isLogged = false;
     }
-     
-    public void sendMsg(String rcv,String msg){
+
+    public void sendMsg(String rcv, String msg) {
         Message m;
-        if(isLogged)
+        if (isLogged) {
             m = new Message(currentUser.getNome(), rcv, msg);
-        
+        }
+
     }
 
     public void sendFile(String file, String dir, String s) {
-
-        tcpFHan.setFileToSend(file);
         File f = new File(dir);
-        tcpFHan.setDirectoryToSend(f);
-        tcpFHan.send();
+        cl.sendFile(file, f, s);
     }
 
     public boolean login(Login log) {
         User r = cl.login(log);
-        if(r != null)
+        if (r != null) {
             currentUser = r;
+        }
         return r != null;
     }
-    
-    public void sendMessage(String dest, String msg){
+
+    public void sendMessage(String dest, String msg) {
         Message m = new Message(currentUser.getNome(), dest, msg);
         cl.sendMsg(m);
-        
+
     }
 
     public List<Message> getMsgs(String s, int n) {
         MessagesRequest req = new MessagesRequest(s, n);
         return cl.sendMsgRequest(req);
+    }
+
+    public void getFile(String file, String dir, String snd) {
+        File f = new File(dir);
+        cl.getFile(file, f, snd);
+    }
+
+    public List<String> getStats(String channel) {
+        StatsRequest req = new StatsRequest(channel);
+        return cl.getStats(req);
+    }
+
+    public List<String> getInfo() {
+        InfoRequest req = new InfoRequest();
+        return cl.getInfo(req);
+    }
+
+    public void sendChannel(String nn, String n, String p, String d) {
+        ChannelEditor edt = new ChannelEditor(nn, n, p, d);
+        cl.sendChannel(edt);
     }
 }

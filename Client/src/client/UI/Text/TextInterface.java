@@ -101,27 +101,58 @@ public class TextInterface {
     }
 
     private void download() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Indique o nome do ficheiro (sem o caminho)");
+        String file = s.nextLine();
+        System.out.println("Indique o caminho onde quer guardar o ficheiro (absoluto e sem o nome):");
+        String dir = s.nextLine();
+        System.out.println("Indique a origem (utilizador ou canal):");
+        String rcv = s.nextLine();
+        l.getFile(file,dir, rcv);
     }
     
     private void editChannel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Indique o nome do canal a editar");
+        String nome = readString();
+        System.out.println("Indique o novo nome ");
+        String novo = readString();
+        System.out.println("Indique a nova password");
+        String novaPass = readString();
+        System.out.println("Indique a nova descricao");
+        String desc = readString();
+        l.sendChannel(nome, novo, novaPass, desc);
     }
 
     private void createChannel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Indique o nome ");
+        String nome = readString();
+        System.out.println("Indique a password");
+        String novaPass = readString();
+        System.out.println("Indique a descricao");
+        String desc = readString();
+        l.sendChannel(null, nome, novaPass, desc);
     }
 
     private void deleteChannel() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Indique o nome ");
+        String nome = readString();
+        System.out.println("Indique a password");
+        String novaPass = readString();
+        l.sendChannel(nome, null, novaPass, null);
     }
 
     private void listInfo() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Informação sobre users e canais:");
+        for(String str : l.getInfo()){
+            System.out.println(str);
+        }
     }
 
     private void stats() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        String s = readString();
+        System.out.println("Estatisitcas do canal: " + s);
+        for(String str : l.getStats(s))
+            System.out.println(str);
     }
 
     private boolean login() {

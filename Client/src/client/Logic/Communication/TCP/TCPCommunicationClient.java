@@ -6,6 +6,7 @@
 package client.Logic.Communication.TCP;
 
 import Features.Message;
+import Helpers.ChannelEditor;
 import interfaces.ISendable;
 import java.net.Socket;
 
@@ -23,9 +24,17 @@ public class TCPCommunicationClient {
     }
     
     
-    public void send(Message m){
+    public void sendMsg(Message m){
         content = m;
         TCPSendableSender snd = new TCPSendableSender(s, m);
+        Thread t = new Thread(snd);
+        t.start();
+        
+    }
+      
+    public void sendChannel(ChannelEditor ce){
+        content = ce;
+        TCPSendableSender snd = new TCPSendableSender(s, ce);
         Thread t = new Thread(snd);
         t.start();
         

@@ -8,10 +8,16 @@ package client.Logic.Communication;
 import Features.Login;
 import Features.Message;
 import Features.User;
+import Helpers.ChannelEditor;
 import Helpers.ConnectionResponse;
+import Helpers.InfoRequest;
 import Helpers.MessagesRequest;
+import Helpers.StatsRequest;
 import client.Logic.Communication.TCP.TCPCommunicationClient;
+import client.Logic.Communication.TCP.TCPFileHandler;
+import client.Logic.Communication.TCP.TCPRequestSender;
 import client.Logic.Communication.UDP.UDPCommunicationClient;
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,15 +37,12 @@ public class ComsLogic {
     private static Socket tcpSocket = null;
     private ObjectInputStream oin;
     private ObjectOutputStream oout;
+    private TCPFileHandler tcpFHan;
     
-    public ComsLogic(){}
+    public ComsLogic(){
+        tcpFHan = new TCPFileHandler(new Socket());
+    }
     
-    /**
-     * 
-     * @param address - string to convert to inet address
-     * @param port - string to convert to int for the port
-     * @return -1 error; 0 did not connect; 1 connected
-     */
     public int connect(String address, String port){
         UDPCommunicationClient com = null;
         
@@ -59,7 +62,6 @@ public class ComsLogic {
                 com.close();
         }
     }
-    
     
     private int retry(ConnectionResponse r){
         List<InetAddress> l = (List<InetAddress>) r.getServerList().keySet();
@@ -113,10 +115,40 @@ public class ComsLogic {
 
     public void sendMsg(Message m) {
         TCPCommunicationClient comClient = new TCPCommunicationClient(tcpSocket);
-        comClient.send(m);
+        comClient.sendMsg(m);
     }
 
     public List<Message> sendMsgRequest(MessagesRequest req) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        TCPRequestSender snd = new TCPRequestSender(tcpSocket, req);
+        return snd.send();
+    }
+    
+    public void sendFile(String file, File dir, String s) {
+
+        tcpFHan.setFileToSend(file);
+        tcpFHan.setDirectoryToSend(dir);
+        tcpFHan.send();
+    }
+
+    public void getFile(String file, File dir, String snd) {
+        tcpFHan.setFileToRec(file);
+        tcpFHan.setDirectoryToRec(dir);
+        tcpFHan.receive();
+    }
+    
+    public List<String> getStats(StatsRequest req){
+        TCPRequestSender snd = new TCPRequestSender(tcpSocket, req);
+        return snd.send();
+    }
+    
+    public List<String> getInfo(InfoRequest req) {
+        TCPRequestSender snd = new TCPRequestSender(tcpSocket, req);
+        return snd.send();
+    }
+    
+    public void sendChannel(ChannelEditor edt){
+       TCPCommunicationClient snd = new TCPCommunicationClient(tcpSocket);
+       snd.sendChannel(edt);
+        
     }
 }

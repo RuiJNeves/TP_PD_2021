@@ -55,7 +55,7 @@ public class Message implements ISendable {
 
     @Override
     public String toString() {
-        return "De " + usernameSend + "\n"+ "A: " + date.toString() + "\n"+message;
+        return "De " + usernameSend + "\n"+ "A " + date.toString() + "\n"+message;
     }
     
     
