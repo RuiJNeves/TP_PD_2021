@@ -5,13 +5,13 @@
  */
 package client.Logic;
 
-import Features.Message;
 import client.Logic.Communication.TCP.TCPFileHandler;
-import Features.Login;
-import Features.User;
-import client.Logic.Communication.ComsLogic;
+import Features.*;
+import Helpers.*;
+import client.Logic.Communication.*;
 import java.io.File;
 import java.net.Socket;
+import java.util.List;
 
 /**
  *
@@ -50,5 +50,16 @@ public class Logic {
         if(r != null)
             currentUser = r;
         return r != null;
+    }
+    
+    public void sendMessage(String dest, String msg){
+        Message m = new Message(currentUser.getNome(), dest, msg);
+        cl.sendMsg(m);
+        
+    }
+
+    public List<Message> getMsgs(String s, int n) {
+        MessagesRequest req = new MessagesRequest(s, n);
+        return cl.sendMsgRequest(req);
     }
 }

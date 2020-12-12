@@ -1,6 +1,7 @@
 package interfaces;
 
-public interface ISendable {
-    
-    public Object getContent();
+import java.io.Serializable;
+
+public interface ISendable extends Serializable{
+   
 }

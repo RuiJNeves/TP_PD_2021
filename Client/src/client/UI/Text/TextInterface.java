@@ -6,6 +6,7 @@
 package client.UI.Text;
 import client.Logic.Logic;
 import Features.Login;
+import Features.Message;
 import client.Logic.Communication.ComsLogic;
 import java.util.Scanner;
 
@@ -27,8 +28,12 @@ public class TextInterface {
     
     public void run(){
         
-        login();
         int opt;
+        
+        while(login()){
+            System.out.println("Login falhado...");
+        }
+  
         do{
             opt = writeMenu(MENU);
             computeOption(opt);
@@ -68,11 +73,11 @@ public class TextInterface {
     }
 
     private void sendMsg() {
-        System.out.println("Indique o destinarior:");
+        System.out.println("Indique o destinario:");
         String rcv = s.nextLine();
         System.out.println("Indique o conteúdo:");
         String msg = s.nextLine();
-        //l.sendMsg(rcv, msg);
+        l.sendMessage(rcv, msg);
     }
 
     private void sendFile() {
@@ -86,7 +91,13 @@ public class TextInterface {
     }
 
     private void rcvMsg() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        System.out.println("Indique quantas mensagens deseja ver:");
+        int n = readInt();
+        System.out.println("Indique o nome do canal/utilizador de onde quer as mensagens:");
+        String s = readString();
+        for(Message m : l.getMsgs(s,n)){
+            System.out.println(m.toString());
+        }
     }
 
     private void download() {

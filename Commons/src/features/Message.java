@@ -1,9 +1,10 @@
 package Features;
 
+import interfaces.ISendable;
 import java.util.Date;
 
 
-public class Message {
+public class Message implements ISendable {
     
     private String usernameSend;
     private String usernameRecive;
@@ -15,11 +16,6 @@ public class Message {
         usernameRecive = rcv;
         message = msg;
     }
-    
-    public Message(){
-        
-    }
-    
     
     /*Setters*/
     public void setUsernameSend(String usernameSend) {
@@ -56,4 +52,11 @@ public class Message {
     public String getMessage() {
         return message;
     }
+
+    @Override
+    public String toString() {
+        return "De " + usernameSend + "\n"+ "A: " + date.toString() + "\n"+message;
+    }
+    
+    
 }

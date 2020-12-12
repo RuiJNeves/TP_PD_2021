@@ -6,8 +6,11 @@
 package client.Logic.Communication;
 
 import Features.Login;
+import Features.Message;
 import Features.User;
 import Helpers.ConnectionResponse;
+import Helpers.MessagesRequest;
+import client.Logic.Communication.TCP.TCPCommunicationClient;
 import client.Logic.Communication.UDP.UDPCommunicationClient;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -16,8 +19,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -108,5 +109,14 @@ public class ComsLogic {
         } catch (IOException | ClassNotFoundException ex) {
             return null;
         }
+    }
+
+    public void sendMsg(Message m) {
+        TCPCommunicationClient comClient = new TCPCommunicationClient(tcpSocket);
+        comClient.send(m);
+    }
+
+    public List<Message> sendMsgRequest(MessagesRequest req) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
