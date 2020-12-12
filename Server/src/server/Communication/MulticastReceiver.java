@@ -17,8 +17,6 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.Logic.IServerSendable;
-import server.Logic.ListServer;
 import static server.Logic.ListServer.listServer;
 import server.Logic.PingRequest;
 import server.Logic.PingResponse;
