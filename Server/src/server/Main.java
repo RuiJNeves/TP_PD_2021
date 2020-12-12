@@ -6,9 +6,9 @@
  * and open the template in the editor.
  */
 
-import Logic.Communication.TcpFileHandler;
 import java.io.*;
 import java.net.*;
+import server.Communication.TcpFileHandler;
 
 /**
  *
