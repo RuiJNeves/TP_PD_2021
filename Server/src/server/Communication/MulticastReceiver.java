@@ -32,7 +32,7 @@ public class MulticastReceiver extends Thread{
     final static int PORT= 5432;
     public static final String List = "LIST";
     public static final int MAX = 1000;
-    protected Server server;
+    protected Server serve_r;
     protected ISendable sendable;
     protected MulticastSocket s = null;
     protected boolean running;
@@ -40,7 +40,7 @@ public class MulticastReceiver extends Thread{
     public MulticastReceiver(ISendable sendable, MulticastSocket s, Server server){
         this.sendable = sendable;
         this.s = s;
-        this.server = server;
+        this.serve_r = server;
         running = false;
         
     }
@@ -78,16 +78,16 @@ public class MulticastReceiver extends Thread{
                         msg = (Message) obj;
                          
                     }else if(obj instanceof Server){
-                        server = (Server)obj;
+                        serve_r = (Server)obj;
                         
-                        if(!listServer.contains(server))
-                            listServer.add(server);
+                        if(!listServer.contains(serve_r))
+                            listServer.add(serve_r);
                         
                     }else if(obj instanceof PingRequest){
                         
                         //thread que envia o ping tb apaga os "Mortos"
                         PingRequest request = (PingRequest) obj;
-                        MulticastSender ms = MulticastSender(new PingResponse(myServer.getAddress()), null, s, InetAddress.getByName("230.30.30.30") );
+                        MulticastSender ms = MulticastSender(new PingResponse(server.getAddress()), null, s, InetAddress.getByName("230.30.30.30") );
                         ms.run();
                         
                     }else if(obj instanceof PingResponse){

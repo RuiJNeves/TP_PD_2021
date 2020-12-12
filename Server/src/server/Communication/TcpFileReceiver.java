@@ -28,10 +28,9 @@ public class TcpFileReceiver implements Runnable{
     File localDirectory;
     String fileName;
     
-    public TcpFileReceiver(Socket s, File l, String f_name){
+    public TcpFileReceiver(Socket s, File l){
         socketToClient =s;
         localDirectory = l;
-        fileName = f_name;
     }
     
     @Override
@@ -50,7 +49,7 @@ public class TcpFileReceiver implements Runnable{
 
             out = socketToClient.getOutputStream();
 
-            requestedFileName = in.readLine();
+            fileName = in.readLine();
 
             //System.out.println("Recebido pedido para \"" + requestCanonicalFilePath + "\" de " + socketToClient.getInetAddress().getHostName() + ":" + socketToClient.getPort());
 

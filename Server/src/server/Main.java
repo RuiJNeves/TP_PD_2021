@@ -6,9 +6,10 @@
  * and open the template in the editor.
  */
 
-import Logic.Communication.TcpFileHandler;
+import server.Communication.TcpFileHandler;
 import java.io.*;
 import java.net.*;
+import server.Logic.Server;
 
 /**
  *
@@ -17,33 +18,16 @@ import java.net.*;
 public class Main {
     
     public static final int MAX_SIZE = 1000;
+    public Server server;
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args){
-        String p = System.getProperty("user.dir");
-        File savingDirectory = new File(p);
+    public void main(String[] args) throws UnknownHostException{
+        int port = Integer.parseInt(args[1]);
+        InetAddress addr = InetAddress.getByName(args[2]);
+        server = new Server(port, addr);
         
-        BufferedReader in = null;
+            
 
-        String fname;
-        ServerSocket socket = null;
-        Socket s;
-
-        try{
-            socket = new ServerSocket(6001);
-            s = socket.accept();
-            
-            in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            
-            fname = in.readLine();
-            TcpFileHandler fh = new TcpFileHandler(s);
-            fh.setDirectoryToSend(savingDirectory);
-            fh.setFileToSend(fname);
-            System.out.println(fh.send());
-            
-        }catch(Exception e){
-            System.out.println("Error" + e.getMessage());
-        }
     }
 }
