@@ -10,6 +10,7 @@ import Features.File;
 import Features.Message;
 import Features.User;
 import Helpers.ChannelEditor;
+import Helpers.RegisterRequest;
 import interfaces.ISendable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -90,15 +91,14 @@ public class MulticastReceiver extends Thread{
                     if(obj instanceof Message){
                         message((Message) obj);
                          
-                    }else if(obj instanceof User){
-                        usr((User) obj);
-                        //guardar na base de dados
-                    
                     }else if(obj instanceof ChannelEditor){
                         channel((ChannelEditor) obj);
                     
                     }else if(obj instanceof File){
                         file((File) obj);
+                        
+                    }else if(obj instanceof RegisterRequest){
+                        register((RegisterRequest) obj);
                     
                     }else if(obj instanceof Server){
                         serve_r = (Server)obj;
@@ -231,8 +231,18 @@ public class MulticastReceiver extends Thread{
         
     }
 
-    private boolean usr(User user) {
-        
-        return true;
+
+    private boolean register(RegisterRequest r) {
+        try {
+            User user = new User(r.getNome(), r.getPass());
+            user.setEmail(r.getEmail());
+            
+            DataBaseUser.insert(user);
+
+            return true;
+        } catch (SQLException | ClassNotFoundException  ex) {     
+            return false;
+        }
+
     }
 }

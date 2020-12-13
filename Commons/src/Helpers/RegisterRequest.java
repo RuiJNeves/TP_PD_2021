@@ -6,12 +6,13 @@
 package Helpers;
 
 import interfaces.IRequest;
+import interfaces.ISendable;
 
 /**
  *
  * @author ruizi
  */
-public class RegisterRequest implements IRequest{
+public class RegisterRequest implements IRequest, ISendable{
     
     private String nome;
     private String email;

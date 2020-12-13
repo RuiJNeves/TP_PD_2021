@@ -14,6 +14,7 @@ import Helpers.ChannelEditor;
 import Helpers.InfoRequest;
 import Helpers.StatsRequest;
 import Helpers.MessagesRequest;
+import Helpers.RegisterRequest;
 import interfaces.IRequest;
 import interfaces.ISendable;
 import java.io.IOException;
@@ -92,6 +93,8 @@ public class TcpCommunication  implements Runnable{
                         messages((MessagesRequest)req);
                     else if(req instanceof Login)
                         login((Login) req);
+                    else if(req instanceof RegisterRequest)
+                        register((RegisterRequest)req);
                 }
             }catch(IOException | ClassNotFoundException e){} 
         }
@@ -256,5 +259,30 @@ public class TcpCommunication  implements Runnable{
         } catch (SQLException | ClassNotFoundException |IOException ex) {
             return false;
         } 
+    }
+
+    private boolean register(RegisterRequest r) {
+        try {
+            User user = new User(r.getNome(), r.getPass());
+            user.setEmail(r.getEmail());
+            
+            
+            DataBaseUser.insert(user);
+            
+            oout.writeObject(true);
+            oout.flush();
+            
+            MulticastSender m_sender = new MulticastSender(null, r, s);
+            m_sender.run();
+            return true;
+        } catch (SQLException | ClassNotFoundException |IOException ex) {
+            try {
+                oout.writeBoolean(false);
+                oout.flush();
+            } catch (IOException ex1) {
+            }
+            
+            return false;
+        }
     }
 }
