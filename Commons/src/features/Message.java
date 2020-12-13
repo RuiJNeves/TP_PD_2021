@@ -5,7 +5,7 @@ import java.util.Date;
 
 
 public class Message implements ISendable {
-    
+    private int id;
     private String usernameSend;
     private String usernameRecive;
     private Date date;
@@ -34,6 +34,10 @@ public class Message implements ISendable {
         this.message = message;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     
     
     /*Getters*/
@@ -51,6 +55,10 @@ public class Message implements ISendable {
 
     public String getMessage() {
         return message;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
