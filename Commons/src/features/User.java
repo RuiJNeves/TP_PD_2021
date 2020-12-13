@@ -9,8 +9,16 @@ public class User implements Receiver{
     private final int Id=0;
     private String nome;
     private String password;
-    private int token;
-    private String imagePath;
+    private String email;
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
     
     
     /*Setters*/
