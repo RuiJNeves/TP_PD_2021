@@ -5,7 +5,10 @@
  */
 package server.Communication;
 
+import Features.Channel;
+import Features.File;
 import Features.Message;
+import Features.User;
 import interfaces.ISendable;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -51,11 +54,14 @@ public class MulticastReceiver extends Thread{
     public void run(){
         DatagramPacket pkt = null;
         ObjectInputStream in;
-        ISendable sendable;
         Message msg;
+        User usr;
+        Channel channel;
+        File file;
         Object obj;
         ByteArrayOutputStream buff;
         ObjectOutputStream out;   
+        
         if(s == null || !running){
             return;
         }
@@ -73,17 +79,32 @@ public class MulticastReceiver extends Thread{
                     
                     if(obj instanceof Message){
                         msg = (Message) obj;
+                        //guardar a mensagem na base de dados
                          
+                    }else if(obj instanceof User){
+                        usr = (User) obj;
+                        //guardar na base de dados
+                    
+                    }else if(obj instanceof Channel){
+                        channel = (Channel) obj;
+                        //guardar na base de dados
+                    
+                    }else if(obj instanceof File){
+                        file = (File) obj;
+                        //guardar na base de dados
+                    
                     }else if(obj instanceof Server){
                         serve_r = (Server)obj;
                         
                         if(!listServer.contains(serve_r))
                             listServer.add(serve_r);
+                        else
+                            listServer.get(listServer.indexOf(serve_r)).setClient(serve_r.getNumberClientes());
                         
                     }else if(obj instanceof PingRequest){
                         
                         PingRequest request = (PingRequest) obj;
-                        MulticastSender ms = new MulticastSender(new PingResponse(addr), null, s );
+                        MulticastSender ms = new MulticastSender(new PingResponse(serve_r), null, s );
                         ms.run();
                         
                     }else if(obj instanceof PingResponse){

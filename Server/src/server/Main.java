@@ -6,11 +6,11 @@ package server;
  * and open the template in the editor.
  */
 
+import Logic.Logic;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import server.Logic.Start;
 
 
 /**
@@ -20,7 +20,7 @@ import server.Logic.Start;
 public class Main {
     
     public static final int MAX_SIZE = 1000;
-    static Start start;
+    static Logic logic;
     /**
      * @param args the command line arguments
      */
@@ -29,7 +29,7 @@ public class Main {
         try {
             addr = InetAddress.getByName(args[2]);
             int i = Integer.parseInt(args[1]);
-            start = new Start(i, addr);
+            logic = new Logic(i, addr);
             //start.work();
             
         } catch (UnknownHostException ex) {

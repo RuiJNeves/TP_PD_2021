@@ -32,7 +32,7 @@ public class UdpServer extends Thread{
 
     private static  ByteArrayInputStream bin;
     private static  ObjectInputStream oin;
-    private static  boolean t = true; //teste
+    private static  boolean running = true; //teste
     private static  ByteArrayOutputStream bout;
     private static  ObjectOutputStream oout;
     
@@ -42,6 +42,9 @@ public class UdpServer extends Thread{
         
     }
         
+    public void terminate(){
+        running = false;
+    }
     
      @Override
     public void run(){
@@ -49,7 +52,7 @@ public class UdpServer extends Thread{
         try{
             socket = new DatagramSocket(socket.getPort());
             
-            while(true){
+            while(running){
                 packet = new DatagramPacket(new byte[MAX_SIZE], MAX_SIZE);
                 socket.receive(packet);
                 
@@ -64,7 +67,7 @@ public class UdpServer extends Thread{
                 
                 if(receivedMsg.equals("connect")){
                     ListServer.ordena();
-                    if((ListServer.listServer.get(0).getClientes() * 100 / server.getClientes())  < 50){
+                    if((ListServer.listServer.get(0).getNumberClientes() * 100 / server.getNumberClientes())  < 50){
                         
                         HashMap map = new HashMap<InetAddress, Integer>();
                         for( Server s : ListServer.listServer){
