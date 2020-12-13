@@ -18,8 +18,16 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.Logic.Database.DataBaseFile;
+import server.Logic.Database.DataBaseMessage;
+import server.Logic.Database.DataBaseSentFileUser;
+import server.Logic.Database.DataBaseUser;
+import server.Logic.Database.DatabaseChannel;
+import server.Logic.Database.DatabaseSentFileChannel;
+import server.Logic.Database.DatabaseSentMessageUser;
 import static server.Logic.ListServer.listServer;
 import server.Logic.PingRequest;
 import server.Logic.PingResponse;
@@ -138,5 +146,43 @@ public class MulticastReceiver extends Thread{
     }
     
     
+    private boolean message(Message m){
+        try {
+            int rcv;
+            int snd;
+            DataBaseMessage.insert(m);
+            if(m.isToChannel())
+                rcv = DatabaseChannel.getChannelByName(m.getUsernameRecive());
+            else
+                rcv = DataBaseUser.getUserByName(m.getUsernameRecive());
+            snd = DataBaseUser.getUserByName(m.getUsernameSend());
+            DatabaseSentMessageUser.insert(m, snd, rcv);
+            return true;
+        } catch (SQLException | ClassNotFoundException ex) {
+            return false;
+        }
+    }
+    
+        private boolean file(File file) {
+        
+        try{
+            int rcv;
+            int snd;
+            DataBaseFile.insert(file);
+            snd = DataBaseUser.getUserByName(file.getSnd());
+            if(file.isToChannel()){
+                 rcv = DatabaseChannel.getChannelByName(file.getRcv());
+                 DatabaseSentFileChannel.insert(snd, rcv, file);
+            }else{
+                rcv = DataBaseUser.getUserByName(file.getRcv());
+                DataBaseSentFileUser.insert(snd, rcv,file);
+            }
+           
+           
+            return true;
+        } catch (SQLException | ClassNotFoundException ex) {
+            return false;
+        }
+    }
     
 }

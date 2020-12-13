@@ -6,11 +6,12 @@ package server;
  * and open the template in the editor.
  */
 
-import Logic.Logic;
+
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import server.Logic.Logic;
 
 
 /**

@@ -21,7 +21,7 @@ import java.net.SocketException;
  * @author Hugo
  */
 public class TcpFileSender implements Runnable{
-    public static final int MAX_SIZE = 4000;
+    public static final int MAX_SIZE = 5000;
     public static final int TIMEOUT = 5; //segundos
         
     File localDirectory;
@@ -75,7 +75,7 @@ public class TcpFileSender implements Runnable{
             System.out.println("Ficheiro " + requestedCanonicalFilePath + " aberto para leitura.");
 
             while((nbytes = requestedFileInputStream.read(fileChunk))>0){
-                out.write(fileChunk, 0,nbytes);
+                out.write(fileChunk, 0, nbytes);
             }
             
             System.out.println("Transferencia concluida");

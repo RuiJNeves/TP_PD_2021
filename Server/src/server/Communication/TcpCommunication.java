@@ -5,6 +5,7 @@
  */
 package server.Communication;
 
+import Features.Channel;
 import Features.File;
 import Features.Message;
 import Helpers.ChannelEditor;
@@ -16,6 +17,8 @@ import interfaces.ISendable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
@@ -37,13 +40,17 @@ public class TcpCommunication  implements Runnable{
     public static final int MAX_SIZE = 256;
     private int listeningPort;
     private Socket socket = null;
+    private MulticastSocket s;
     private ServerSocket socketEscuta = null;
     private Object receivedMsg;
+    private TcpFileHandler file_handler;
     private boolean running;
 
-    public TcpCommunication(int listeningPort, ServerSocket socketEscuta) {
+    public TcpCommunication(int listeningPort, ServerSocket socketEscuta, TcpFileHandler file_handler, MulticastSocket s) {
         this.listeningPort = listeningPort;
         this.socketEscuta = socketEscuta;
+        this.file_handler = file_handler;
+        this.s = s;
     }
 
     @Override
@@ -67,11 +74,11 @@ public class TcpCommunication  implements Runnable{
                         message((Message)snd);
                     else if(snd instanceof File)
                        file((File)snd);
+                    else if(snd instanceof ChannelEditor)
+                        channel((ChannelEditor)snd);
                 }else if(receivedMsg instanceof IRequest){
                     IRequest req = (IRequest) receivedMsg;
-                    if(req instanceof ChannelEditor)
-                        System.out.println("");
-                    else if(req instanceof InfoRequest)
+                    if(req instanceof InfoRequest)
                         System.out.println("");
                     else if(req instanceof StatsRequest)
                         System.out.println("");
@@ -98,6 +105,9 @@ public class TcpCommunication  implements Runnable{
                 rcv = DataBaseUser.getUserByName(m.getUsernameRecive());
             snd = DataBaseUser.getUserByName(m.getUsernameSend());
             DatabaseSentMessageUser.insert(m, snd, rcv);
+
+            MulticastSender m_sender = new MulticastSender(null, m, s);
+            m_sender.run();
             return true;
         } catch (SQLException | ClassNotFoundException ex) {
             return false;
@@ -118,11 +128,63 @@ public class TcpCommunication  implements Runnable{
                 rcv = DataBaseUser.getUserByName(file.getRcv());
                 DataBaseSentFileUser.insert(snd, rcv,file);
             }
-           
+            
+            if(!file.isSending()){
+               file_handler.setDirectoryToSend(new java.io.File(file.getDir()));
+               file_handler.setFileToSend(file.getFile());
+               file_handler.send();
+            }else{
+                file_handler.dirToReceive(new java.io.File(file.getDir()));
+                file_handler.receive();
+            }
+                
            
             return true;
         } catch (SQLException | ClassNotFoundException ex) {
             return false;
         }
+        
+    }
+
+    private boolean channel(ChannelEditor channelEditor) {
+        try {
+            Channel channel = new Channel();
+            int idCreator = DataBaseUser.getUserByName(channelEditor.getCreator());
+            
+            if(channelEditor.getNome() == null && channelEditor.getCurrentPassword()== null){
+                channel.setDescricao(channelEditor.getDescricao());
+                channel.setNome(channelEditor.getNewNome());
+                channel.setPassword(channelEditor.getPassword());
+                channel.setIdCreator(idCreator);
+                DatabaseChannel.insert(channel);
+                
+            }else if(channelEditor.getNewNome() == null && channelEditor.getPassword() == null && channelEditor.getDescricao()==null){
+                int idChannel = DatabaseChannel.getChannelByName(channelEditor.getNome());
+                channel.setNome(channelEditor.getNome());
+                channel.setPassword(channelEditor.getCurrentPassword());
+                channel.setId(idChannel);
+                DatabaseChannel.delete(channel);
+                
+            }else{
+                int idChannel = DatabaseChannel.getChannelByName(channelEditor.getNome());
+                channel.setDescricao(channelEditor.getDescricao());
+                channel.setNome(channelEditor.getNewNome());
+                channel.setPassword(channelEditor.getPassword());
+                channel.setId(idChannel);
+                DatabaseChannel.update(channel);
+            }
+            
+            
+            
+            MulticastSender m_sender = new MulticastSender(null, channelEditor , s);
+            m_sender.run();
+            
+            
+            return true;
+        } catch (SQLException | ClassNotFoundException ex) {
+            return false;
+        }
+        
+        
     }
 }

@@ -19,15 +19,21 @@ public class File implements ISendable{
     boolean toChannel;
     String snd;
     String rcv;
-
-    public File(String file, String dir, boolean toChannel, String snd, String rcv) {
+    boolean sending;
+    
+    public File(String file, String dir, boolean toChannel, String snd, String rcv, boolean sending){
         this.file = file;
         this.dir = dir;
         this.toChannel = toChannel;
         this.snd = snd;
         this.rcv = rcv;
+        this.sending = sending;
     }
-
+    
+    public boolean isSending(){
+        return sending;
+    }
+    
     public String getSnd() {
         return snd;
     }

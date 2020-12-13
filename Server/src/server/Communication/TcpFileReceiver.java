@@ -22,7 +22,7 @@ import java.net.SocketException;
  * @author Hugo
  */
 public class TcpFileReceiver implements Runnable{
-    public static final int MAX_SIZE = 4000;
+    public static final int MAX_SIZE = 5000;
     public static final int TIMEOUT = 5; //segundos
     Socket socketToClient;
     File localDirectory;

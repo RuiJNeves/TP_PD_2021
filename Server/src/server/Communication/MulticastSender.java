@@ -68,16 +68,9 @@ public class MulticastSender extends Thread{
                 pk.setLength(buffer.size());
                 m_socket.send(pk); 
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(MulticastReceiver.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
             }
                        
-        }finally{
-            
-            if(m_socket != null){
-                m_socket.close();
-            }
-            //t.join(); //Para esperar que a thread termine caso esteja em modo daemon
-            
+        }catch (Exception ex) {
         }
     }
 }

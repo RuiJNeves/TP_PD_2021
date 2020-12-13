@@ -59,7 +59,7 @@ public class CommsLogic {
             m_receiver = new MulticastReceiver(m_socket, server, server.getAddress());
             
             try {
-                tcp_comms = new TcpCommunication(server.getPort(), new ServerSocket(server.getPort()));
+                tcp_comms = new TcpCommunication(server.getPort(), new ServerSocket(server.getPort()), file_handler,m_socket);
             } catch (IOException ex) {
                 Logger.getLogger(CommsLogic.class.getName()).log(Level.SEVERE, null, ex);
             }
