@@ -12,14 +12,18 @@ import java.net.InetAddress;
  * @author Hugo
  */
 public class PingResponse implements IServerSendable {
-    InetAddress inet;
+    Server server;
     
-    public PingResponse(InetAddress addr){
-        inet = addr;
+    public PingResponse(Server server){
+        this.server = server;
+    }
+    
+    public Server getServer(){
+        return server;
     }
     
     public InetAddress getAddress(){
-        return inet;
+        return server.getAddress();
     }
     
 }

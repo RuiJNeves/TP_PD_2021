@@ -29,9 +29,18 @@ public class ListServer{
     public static void ordena(){
         listServer.sort(new Comparator<Server>(){
            public int compare(Server a, Server b){
-               return a.getClientes() - b.getClientes();
+               return a.getNumberClientes() - b.getNumberClientes();
            } 
         });
+    }
+    
+    public static String getServers(){
+        String s = new String();
+        s += "Existem : " + listServer.size() + "\n\n";
+        for (Server server : listServer)
+            s += "-> " + server.toString() + "\n";
+        
+        return s;
     }
     
 }
