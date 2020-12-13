@@ -28,10 +28,9 @@ public class TcpFileReceiver implements Runnable{
     File localDirectory;
     String fileName;
     
-    public TcpFileReceiver(Socket s, File l, String f_name){
+    public TcpFileReceiver(Socket s, File l){
         socketToClient =s;
         localDirectory = l;
-        fileName = f_name;
     }
     
     @Override

@@ -13,11 +13,11 @@ import java.net.Socket;
  * @author Hugo
  */
 public class TcpFileHandler {
-    String fileToSend, fileToReceive;
+    String fileToSend;
     Socket socket;    
     File dirToSend, dirToReceive;
     
-    boolean fileSendSet = false, fileReceiveSet = false;
+    boolean fileSendSet = false;
     boolean dirSendSet = false, dirReceiveSet = false;
     
     public TcpFileHandler(Socket socket){
@@ -32,11 +32,6 @@ public class TcpFileHandler {
     public void setDirectoryToSend(File dir){
         dirToSend = dir;
         dirSendSet = true;
-    }
-    
-    public void fileToReceive(String f){
-        fileToReceive = f;
-        fileReceiveSet = true;
     }
     
     public void dirToReceive(File dir){
@@ -55,10 +50,10 @@ public class TcpFileHandler {
     }
     
     public boolean receive(){
-        if(fileReceiveSet && dirReceiveSet){
-            Thread tReceive = new Thread(new TcpFileReceiver(socket, dirToReceive, fileToReceive));
+        if(dirReceiveSet){
+            Thread tReceive = new Thread(new TcpFileReceiver(socket, dirToReceive));
             tReceive.start();
-            fileReceiveSet = dirReceiveSet = false;
+            dirReceiveSet = false;
             return true;
         }
         return false;

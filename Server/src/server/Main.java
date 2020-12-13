@@ -6,11 +6,12 @@ package server;
  * and open the template in the editor.
  */
 
-import java.io.*;
 import java.net.*;
 import server.Communication.TcpFileHandler;
 import java.sql.*;
 import server.Logic.Database.DBConnection;
+import server.Logic.Server;
+
 
 /**
  *
@@ -19,23 +20,14 @@ import server.Logic.Database.DBConnection;
 public class Main {
     
     public static final int MAX_SIZE = 1000;
+    public Server server;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args){
         /*String p = System.getProperty("user.dir");
         File savingDirectory = new File(p);
-        
-        BufferedReader in = null;
 
-        String fname;
-        ServerSocket socket = null;
-        Socket s;
-
-        try{
-            socket = new ServerSocket(6001);
-            s = socket.accept();
-            
             in = new BufferedReader(new InputStreamReader(s.getInputStream()));
             
             fname = in.readLine();

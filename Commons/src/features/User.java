@@ -10,7 +10,6 @@ public class User implements IReceiver{
     private String password;
     private String email;
     
-    
     /*Setters*/
     public void setNome(String nome) {
         this.nome = nome;
