@@ -8,8 +8,6 @@ package client.Logic.Communication.TCP;
 import java.io.*;
 import java.net.*;
 import Features.File;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -23,11 +21,13 @@ public class TCPFileSender implements Runnable{
     Socket sckt;
     java.io.File fl;
     String fileName;
+    Features.File file;
     
-    public TCPFileSender(Socket s, java.io.File f, String fname){
+    public TCPFileSender(Socket s, java.io.File f, String fname, Features.File file){
         sckt = s;
         fl = f;
         fileName = fname;
+        this.file = file;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class TCPFileSender implements Runnable{
                 return;
             }
             ObjectOutputStream oout = new ObjectOutputStream(sckt.getOutputStream());
-            oout.writeObject(new Features.File(fileName, canonicalPath));
+            oout.writeObject(file);
             
             ObjectInputStream oin = new ObjectInputStream(sckt.getInputStream());
             boolean resp = (boolean)oin.readObject();

@@ -89,7 +89,9 @@ public class TextInterface {
         String dir = s.nextLine();
         System.out.println("Indique o destinatario:");
         String rcv = s.nextLine();
-        l.sendFile(file,dir, rcv);
+         System.out.println("E para canl? (1 - Sim, 2 - Nao)");
+        int c =  readInt();
+        l.sendFile(file,dir, rcv, (c==1));
     }
 
     private void rcvMsg() {
@@ -97,7 +99,9 @@ public class TextInterface {
         int n = readInt();
         System.out.println("Indique o nome do canal/utilizador de onde quer as mensagens:");
         String s = readString();
-        for(Message m : l.getMsgs(s,n)){
+        System.out.println("è canal? (1 - Sim 2 - Nao)");
+        int c = readInt();
+        for(Message m : l.getMsgs(s,n, (c==1))){
             System.out.println(m.toString());
         }
     }

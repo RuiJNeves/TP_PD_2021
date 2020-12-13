@@ -123,11 +123,12 @@ public class ComsLogic {
         return snd.send();
     }
     
-    public void sendFile(String file, File dir, String s) {
+    public void sendFile(String file, File dir, String s, boolean toChannel, String r) {
 
         tcpFHan.setFileToSend(file);
         tcpFHan.setDirectoryToSend(dir);
-        tcpFHan.send();
+        
+        tcpFHan.send(new Features.File(file, dir.getName(), toChannel, s, r, true));
     }
 
     public void getFile(String file, File dir, String snd) {

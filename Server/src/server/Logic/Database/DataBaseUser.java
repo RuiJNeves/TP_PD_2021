@@ -2,6 +2,7 @@ package server.Logic.Database;
 
 import Features.User;
 import java.sql.*;
+import java.util.ArrayList;
 
 /**
  *
@@ -46,6 +47,20 @@ public class DataBaseUser {
         String sql = "SELECT TOP 1 * FROM User WHERE Name = \"" + s + "\";";
         ResultSet r = stmt.executeQuery(sql);
         int ret =  Integer.parseInt(r.getArray(0).toString());
+        r.close();
+        return ret;
+    }
+
+    public static ArrayList<String> getInfo() throws SQLException, ClassNotFoundException {
+        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+        String sql = "SELECT * FROM User;";
+        ResultSet r = stmt.executeQuery(sql);
+        ArrayList<String> ret = new ArrayList<>();
+        while(r.next()){
+           
+            String s = "id: "+ r.getInt(1)+" Nome: " + r.getString(2) + "Email: " + r.getString(3);
+            ret.add(s);
+        }
         r.close();
         return ret;
     }

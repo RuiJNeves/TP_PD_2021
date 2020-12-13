@@ -49,9 +49,9 @@ public class TCPFileHandler {
         dirRecSet = true;
     }
     
-    public boolean send(){
+    public boolean send(Features.File file){
         if(fileSendSet && dirSendSet){
-            Thread tSend = new Thread(new TCPFileSender(s, dirToSend, fileToSend));
+            Thread tSend = new Thread(new TCPFileSender(s, dirToSend, fileToSend, file));
             tSend.start();
             fileSendSet = false;
             dirSendSet = false;
