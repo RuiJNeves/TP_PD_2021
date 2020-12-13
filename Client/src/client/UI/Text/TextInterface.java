@@ -7,6 +7,7 @@ package client.UI.Text;
 import client.Logic.Logic;
 import Features.Login;
 import Features.Message;
+import Helpers.RegisterRequest;
 import client.Logic.Communication.ComsLogic;
 import java.util.Scanner;
 
@@ -29,6 +30,15 @@ public class TextInterface {
     public void run(){
         
         int opt;
+        
+        opt = writeMenu(new String[]{"Login", "Registo"});
+        if(opt == 0)
+            return;
+        
+        if(opt != 1){
+            while(register())
+                System.out.println("Registo falhado...");
+        }
         
         while(login()){
             System.out.println("Login falhado...");
@@ -171,5 +181,17 @@ public class TextInterface {
         String pass = readString();
         Login log = new Login(nome, pass);
         return l.login(log);
+    }
+
+    private boolean register() {
+        System.out.println("Register");
+        System.out.println("Username: ");
+        String nome = readString();
+        System.out.println("Password: ");
+        String pass = readString();
+        System.out.println("Email:");
+        String email = readString();
+        RegisterRequest reg = new RegisterRequest(nome, pass, email);
+        return l.register(reg);
     }
 }

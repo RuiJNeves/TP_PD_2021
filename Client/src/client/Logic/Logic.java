@@ -41,10 +41,10 @@ public class Logic {
 
     public boolean login(Login log) {
         User r = cl.login(log);
-        if (r != null) {
+        if (r.getNome() != null) {
             currentUser = r;
         }
-        return r != null;
+        return r.getNome() != null;
     }
 
     public void sendMessage(String dest, String msg, boolean toChannel) {
@@ -76,5 +76,10 @@ public class Logic {
     public void sendChannel(String n, String cp, String nn, String p, String d) {
         ChannelEditor edt = new ChannelEditor(n, cp, nn, p, d, currentUser.getNome());
         cl.sendChannel(edt);
+    }
+
+    public boolean register(RegisterRequest reg) {
+        
+        return cl.register(reg);
     }
 }

@@ -12,6 +12,7 @@ import Helpers.ChannelEditor;
 import Helpers.ConnectionResponse;
 import Helpers.InfoRequest;
 import Helpers.MessagesRequest;
+import Helpers.RegisterRequest;
 import Helpers.StatsRequest;
 import client.Logic.Communication.TCP.TCPCommunicationClient;
 import client.Logic.Communication.TCP.TCPFileHandler;
@@ -151,5 +152,20 @@ public class ComsLogic {
        TCPCommunicationClient snd = new TCPCommunicationClient(tcpSocket);
        snd.sendChannel(edt);
         
+    }
+
+    public boolean register(RegisterRequest reg) {
+        boolean resp;
+        try {
+            oin = new ObjectInputStream(tcpSocket.getInputStream());
+            oout = new ObjectOutputStream(tcpSocket.getOutputStream());
+            
+            oout.writeObject(reg);
+            oout.flush();
+            resp = (boolean)oin.readObject();
+            return resp;
+        } catch (IOException | ClassNotFoundException ex) {
+            return false;
+        }
     }
 }
