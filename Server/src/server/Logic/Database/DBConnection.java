@@ -5,6 +5,7 @@
  */
 package server.Logic.Database;
 
+import java.net.InetAddress;
 import java.sql.*;
 /**
  *
@@ -14,21 +15,22 @@ public class DBConnection {
     
     private static DBConnection con = null;
     
-    static final String DRIVER = "org.mariadb.jdbc.Driver";
-    static final String DB_LINK = "jdbc:mariadb://localhost/pd_20-21";
-    static final String USER = "java";
-    static final String PASS = "javapassword123";
+    private static final String DRIVER = "org.mariadb.jdbc.Driver";
+    private static String DB_LINK;
+    private static final String USER = "java";
+    private static final String PASS = "javapassword123";
     
     final private Connection CONN;
     
-    private DBConnection() throws SQLException, ClassNotFoundException{
+    private DBConnection(InetAddress bd) throws SQLException, ClassNotFoundException{
         Class.forName(DRIVER);
+        DB_LINK = "jdbc:mariadb://"+ bd.toString() +"/pd_20-21";
         CONN = DriverManager.getConnection(DB_LINK, USER, PASS);
     }
     
-    static public DBConnection getCon() throws SQLException, ClassNotFoundException{
+    static public DBConnection getCon(InetAddress bd) throws SQLException, ClassNotFoundException{
         if(con == null)
-            con = new DBConnection();
+            con = new DBConnection(bd);
         
         return con;
     }
@@ -36,5 +38,6 @@ public class DBConnection {
     public Connection getConnection(){
         return CONN;
     }
+
             
 }

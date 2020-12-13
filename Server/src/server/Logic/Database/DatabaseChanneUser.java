@@ -6,6 +6,7 @@
 package server.Logic.Database;
 
 import Features.*;
+import java.net.InetAddress;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -15,15 +16,15 @@ import java.sql.Statement;
  */
 public class DatabaseChanneUser {
     
-      public static void insert(Channel c, User u) throws SQLException, ClassNotFoundException{
-        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+      public static void insert(Channel c, User u,InetAddress bd) throws SQLException, ClassNotFoundException{
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "Insert Into Channel_has_User(idChannel, idUser)"
                 + "Values (\""+c.getId()+"\", \""+ u.getId() + ");";
         stmt.executeQuery(sql);
     }
     
-    public static void delete(Channel c, User u) throws SQLException, ClassNotFoundException{
-        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+    public static void delete(Channel c, User u,InetAddress bd) throws SQLException, ClassNotFoundException{
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "DELETE FROM Channel_has_User WHERE idChannel = " + c.getId() + " AND idUser = " + u.getId() + ";";
         stmt.executeQuery(sql);
     }

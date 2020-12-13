@@ -26,15 +26,15 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args){
-        InetAddress addr;
+        InetAddress db;
         try {
-            addr = InetAddress.getByName(args[2]);
-            int i = Integer.parseInt(args[1]);
-            logic = new Logic(i, addr);
-            //start.work();
+            int udp_port = Integer.parseInt(args[2]);
+            db = InetAddress.getByName(args[3]);
+            int tcp_port = Integer.parseInt(args[1]);
+            logic = new Logic(tcp_port, udp_port, db);
+            logic.work();
             
         } catch (UnknownHostException ex) {
-            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
         }
         
     }

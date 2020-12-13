@@ -7,6 +7,7 @@ package server.Logic.Database;
 
 import java.sql.*;
 import Features.*;
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 /**
@@ -14,18 +15,18 @@ import java.util.ArrayList;
  * @author Hugo
  */
 public class DataBaseSentMessageChannel {
-    public static void inset (User user, Channel channel, Message txt) throws SQLException, ClassNotFoundException{
+    public static void inset (User user, Channel channel, Message txt,InetAddress bd) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
-        stmt = DBConnection.getCon().getConnection().createStatement();
+        stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "Insert Into SentMessageChannel(idUser, idChannel, idMessage)"
                     + "Values (" + user.getId() + ", "+ channel.getId() +", "+ txt.getId() + ");";
 
         stmt.executeQuery(sql);
     }
     
-        public static  ArrayList<String> getMsgs(int id, int n) throws SQLException, ClassNotFoundException{
+        public static  ArrayList<String> getMsgs(int id, int n,InetAddress bd) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
-        stmt = DBConnection.getCon().getConnection().createStatement();
+        stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "SELECT TOP " + n + " Message.Text, User.Name FROM Message "
                 + "INNER JOIN MessageSentChannel ON Message.idMessage = MessageSentChannel.idMessage "
                 + "INNER JOIN User ON MessageSentChannel.idUser = User.idUser"

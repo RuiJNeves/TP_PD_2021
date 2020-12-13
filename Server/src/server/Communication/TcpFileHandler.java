@@ -13,8 +13,8 @@ import java.net.Socket;
  * @author Hugo
  */
 public class TcpFileHandler {
-    String fileToSend;
-    Socket socket;    
+    String fileToSend;  
+    Socket socket;
     File dirToSend, dirToReceive;
     
     boolean fileSendSet = false;

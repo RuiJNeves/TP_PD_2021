@@ -1,6 +1,7 @@
 package server.Logic.Database;
 
 import Features.User;
+import java.net.InetAddress;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -10,10 +11,10 @@ import java.util.ArrayList;
  */
 public class DataBaseUser {
     
-    public static void insert(User user) throws SQLException, ClassNotFoundException{
+    public static void insert(User user,InetAddress bd) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
 
-        stmt = (Statement) DBConnection.getCon().getConnection().createStatement();
+        stmt = (Statement) DBConnection.getCon(bd).getConnection().createStatement();
 
         String sql = "Insert Into User(Name, Email, Password) "
                     + "Values (\""+user.getNome()+"\", \""+user.getEmail() +"\", \"" + user.getPassword() + "\");" ;
@@ -22,9 +23,9 @@ public class DataBaseUser {
 
     }
     
-    public static void delete(int id) throws SQLException, ClassNotFoundException{
+    public static void delete(int id,InetAddress bd) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
-        stmt = DBConnection.getCon().getConnection().createStatement();
+        stmt = DBConnection.getCon(bd).getConnection().createStatement();
 
             String sql = "Delete from User "
                     + "Where idUser = " + id + ";";
@@ -32,9 +33,9 @@ public class DataBaseUser {
             stmt.executeQuery(sql);
     }
     
-    public static void update(int id, User user) throws SQLException, ClassNotFoundException{
+    public static void update(int id, User user,InetAddress bd) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
-        stmt = (Statement) DBConnection.getCon().getConnection().createStatement();
+        stmt = (Statement) DBConnection.getCon(bd).getConnection().createStatement();
 
            String sql = "Update User "
                    + "Set Name=\""+ user.getNome() + "\", Email=\""+ user.getEmail()+ "\", Password=\"" + user.getPassword()+ "\" "
@@ -42,8 +43,8 @@ public class DataBaseUser {
            stmt.executeQuery(sql);
     }
     
-    public static int getUserByName(String s) throws SQLException, ClassNotFoundException{
-        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+    public static int getUserByName(String s,InetAddress bd) throws SQLException, ClassNotFoundException{
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "SELECT TOP 1 * FROM User WHERE Name = \"" + s + "\";";
         ResultSet r = stmt.executeQuery(sql);
         int ret =  Integer.parseInt(r.getArray(0).toString());
@@ -51,8 +52,8 @@ public class DataBaseUser {
         return ret;
     }
 
-    public static ArrayList<String> getInfo() throws SQLException, ClassNotFoundException {
-        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+    public static ArrayList<String> getInfo(InetAddress bd) throws SQLException, ClassNotFoundException {
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "SELECT * FROM User;";
         ResultSet r = stmt.executeQuery(sql);
         ArrayList<String> ret = new ArrayList<>();
@@ -65,8 +66,8 @@ public class DataBaseUser {
         return ret;
     }
     
-    public static User loginUser(String name, String pass) throws SQLException, ClassNotFoundException{
-        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+    public static User loginUser(String name, String pass,InetAddress bd) throws SQLException, ClassNotFoundException{
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "SELECT * FROM User where Name=\""+ name+"\" and Password=\"" + pass +"\";";
         ResultSet r = stmt.executeQuery(sql);
         User user = null;

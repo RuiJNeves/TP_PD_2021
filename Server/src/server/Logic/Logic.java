@@ -1,6 +1,7 @@
 package server.Logic;
 
 import java.net.InetAddress;
+import java.util.Scanner;
 import server.Communication.CommsLogic;
 import server.Logic.Server;
 
@@ -15,11 +16,31 @@ import server.Logic.Server;
  * @author Hugo
  */
 public class Logic {
-    Server server;
+    InetAddress bd;
+    CommsLogic c;
     
+    public Logic( int port,  int udp_port, InetAddress bd){
+        this.bd = bd;
+        c = new CommsLogic(port,udp_port , bd);
+    }
     
-    public Logic( int port,  InetAddress addr){
-        server = new Server(port, addr);
-        CommsLogic c = new CommsLogic(server);
+    public void work(){
+        Scanner scanner = new Scanner(System.in);
+        String s;
+        c.prepare();
+        c.start();
+        //executart comms logic
+        
+        while((s = scanner.nextLine()).equalsIgnoreCase("shutdown")){
+            if(s.equalsIgnoreCase("Clients")){
+                System.out.println(c.getUsers());
+            }
+
+            if(s.equalsIgnoreCase("Servers")){
+                System.out.println(ListServer.getServers());
+            }
+        }
+
+        c.finish();
     }
 }

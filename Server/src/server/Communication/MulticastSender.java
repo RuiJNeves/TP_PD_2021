@@ -29,6 +29,7 @@ public class MulticastSender extends Thread{
     DatagramPacket dgram;
     protected ISendable user_sendable;
     protected IServerSendable sendable;
+    protected byte[] array;
     protected MulticastSocket m_socket = null;
     
     public MulticastSender(IServerSendable sendable, ISendable user_sendable, MulticastSocket s){
@@ -36,7 +37,13 @@ public class MulticastSender extends Thread{
         this.m_socket = s;
         this.sendable =sendable;
         this.user_sendable = user_sendable;
-        
+        array = null;
+    }
+    
+    public MulticastSender(byte[] b_array){
+        array = b_array;
+        user_sendable = null ;
+        sendable = null;
     }
     
     
@@ -58,7 +65,9 @@ public class MulticastSender extends Thread{
 
                 }else if(sendable != null){               
                     oout.writeObject(sendable);
-                }else
+                }else if(user_sendable == null && sendable == null)
+                    oout.write(array);
+                else
                     oout.writeObject(PING);
 
                 oout.flush(); 

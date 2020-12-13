@@ -87,4 +87,8 @@ public class Logic {
         EnterChannel ec = new EnterChannel(currentUser.getNome(), c, p);
         cl.enterChannel(ec);
     }
+
+    public void finish() {
+        cl.finish();
+    }
 }

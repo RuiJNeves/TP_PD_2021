@@ -27,6 +27,8 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -42,7 +44,7 @@ public class ComsLogic {
     private TCPFileHandler tcpFHan;
     
     public ComsLogic(){
-        tcpFHan = new TCPFileHandler(new Socket());
+        
     }
     
     public int connect(String address, String port){
@@ -98,6 +100,7 @@ public class ComsLogic {
     private void tcpConnect(InetAddress server, int port) throws IOException {
         tcpSocket = new Socket(server, port);
         tcpSocket.setSoTimeout(TIMEOUT*1000);
+        tcpFHan = new TCPFileHandler(tcpSocket);
     }
     
     public User login(Login l){
@@ -173,5 +176,12 @@ public class ComsLogic {
     public void enterChannel(EnterChannel ec) {
        TCPCommunicationClient comClient = new TCPCommunicationClient(tcpSocket);
        comClient.sendEnterChannel(ec);
+    }
+
+    public void finish() {
+        try {
+            tcpSocket.close();
+        } catch (IOException ex) {
+        }
     }
 }

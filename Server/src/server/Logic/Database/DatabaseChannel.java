@@ -6,6 +6,7 @@
 package server.Logic.Database;
 
 import Features.Channel;
+import java.net.InetAddress;
 import java.sql.*;
 import java.util.ArrayList;
 /**
@@ -14,29 +15,29 @@ import java.util.ArrayList;
  */
 public class DatabaseChannel {
     
-    public static void insert(Channel c) throws SQLException, ClassNotFoundException{
-        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+    public static void insert(Channel c,InetAddress bd) throws SQLException, ClassNotFoundException{
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "Insert Into Channel(Name, Password, Descricao, idCreator)"
                 + "Values (\""+c.getNome()+"\", \""+ c.getPassword() + "\",\""+c.getDescricao()+"\", " + c.getIdCreator() + ");";
         stmt.executeQuery(sql);
     }
     
-    public static void delete(Channel c) throws SQLException, ClassNotFoundException{
-        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+    public static void delete(Channel c,InetAddress bd) throws SQLException, ClassNotFoundException{
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "DELETE FROM Channel WHERE idChannel = " + c.getId() + ";";
         stmt.executeQuery(sql);
     }
     
-    public static void update(Channel c) throws SQLException, ClassNotFoundException{
-        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+    public static void update(Channel c,InetAddress bd) throws SQLException, ClassNotFoundException{
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "UPDATE Channel "
                 + "SET Name = \""+c.getNome()+"\", Password = \""+ c.getPassword() + "\", Descricao = \""+c.getDescricao()+"\" "
                 + "WHERE idChannel = " + c.getId() + ";";
         stmt.executeQuery(sql);
     }
     
-    public static int getChannelByName(String s) throws SQLException, ClassNotFoundException{
-        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+    public static int getChannelByName(String s,InetAddress bd) throws SQLException, ClassNotFoundException{
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "SELECT TOP 1 * FROM Channel WHERE Name = \"" + s + "\";";
         ResultSet r = stmt.executeQuery(sql);
         int ret =  Integer.parseInt(r.getArray(0).toString());
@@ -44,8 +45,8 @@ public class DatabaseChannel {
         return ret;
     }
 
-    public static ArrayList<String> getInfo() throws SQLException, ClassNotFoundException {
-        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+    public static ArrayList<String> getInfo(InetAddress bd) throws SQLException, ClassNotFoundException {
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "SELECT* FROM Channel;";
         ResultSet r = stmt.executeQuery(sql);
         ArrayList<String> ret = new ArrayList<>();
@@ -60,8 +61,8 @@ public class DatabaseChannel {
         return ret;
     }
 
-    public static ArrayList<String> getStats(int id) throws SQLException, ClassNotFoundException {
-        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+    public static ArrayList<String> getStats(int id,InetAddress bd) throws SQLException, ClassNotFoundException {
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sqlUsers = "SELECT COUNT(*) FROM Channel_has_User WHERE idChannel = " + id + ";";
         ResultSet r = stmt.executeQuery(sqlUsers);
         int users = r.getInt(1);
@@ -79,6 +80,17 @@ public class DatabaseChannel {
         ret.add(("Ficheiros: " + files));
         r.close();
         return ret;
+    }
+
+    public static int getChannelWithPass(String channel, String pass, InetAddress bd) throws SQLException, ClassNotFoundException {
+        Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
+        String sql = "SELECT id FROM Channel WHERE  Name= \"" + channel + "\" and Password=\""+ pass+ "\";";
+        ResultSet r = stmt.executeQuery(sql);
+        
+        while(r.next())
+            return r.getInt(1);
+        
+        return -1;
     }
     
 }

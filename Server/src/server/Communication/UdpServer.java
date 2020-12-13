@@ -29,7 +29,7 @@ public class UdpServer extends Thread{
     private static DatagramSocket socket = null;
     private static DatagramPacket packet;
     private static String receivedMsg;
-
+    static int port ;
     private static  ByteArrayInputStream bin;
     private static  ObjectInputStream oin;
     private static  boolean running = true; //teste
@@ -37,9 +37,9 @@ public class UdpServer extends Thread{
     private static  ObjectOutputStream oout;
     
     
-    public UdpServer(Server s) {
+    public UdpServer(Server s, int port) {
         server = s;
-        
+        this.port = port;
     }
         
     public void terminate(){
@@ -50,7 +50,7 @@ public class UdpServer extends Thread{
     public void run(){
         
         try{
-            socket = new DatagramSocket(socket.getPort());
+            socket = new DatagramSocket(port);
             
             while(running){
                 packet = new DatagramPacket(new byte[MAX_SIZE], MAX_SIZE);
@@ -71,13 +71,13 @@ public class UdpServer extends Thread{
                         
                         HashMap map = new HashMap<InetAddress, Integer>();
                         for( Server s : ListServer.listServer){
-                            map.put(s.getAddress(), s.getPort());
+                            map.put(s.getAddress(), s.getTcpPort());
                         }
                         
                         oout.writeObject(new ConnectionResponse(false, map, -1));
                         
                     }else{
-                        oout.writeObject(new ConnectionResponse(true, null, server.getPort()));
+                        oout.writeObject(new ConnectionResponse(true, null, server.getTcpPort()));
                     }
                     packet.setData(bout.toByteArray());
                     packet.setLength(bout.size());
@@ -88,11 +88,8 @@ public class UdpServer extends Thread{
         }catch(NumberFormatException e){
             System.out.println("O porto de escuta deve ser um inteiro positivo.");
         } catch (SocketException ex) {
-            Logger.getLogger(UdpServer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (IOException ex) {
-            Logger.getLogger(UdpServer.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(UdpServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
      

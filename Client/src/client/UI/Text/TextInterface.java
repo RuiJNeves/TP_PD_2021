@@ -49,6 +49,8 @@ public class TextInterface {
             computeOption(opt);
             
         }while(opt != 0);
+        
+        l.finish();
     }
     
     private int writeMenu(String[] opts){

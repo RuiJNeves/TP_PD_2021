@@ -18,24 +18,34 @@ import java.util.List;
  */
 public class Server implements IServerSendable{
     int port;
+    int udp_port;
     InetAddress addr;
     int nClientes;
     List<String> clientList;  
     boolean check = false;
     
     
-    public Server(int port, InetAddress addr){
+    public Server(int port, int udp_port){
         this.port = port;
-	this.addr = addr;
+	this.udp_port = udp_port;
 	nClientes = 0;
         clientList = new LinkedList<>();
     }
 
+    public int getUdpPort(){
+	return udp_port;
+    }
+    
     public InetAddress getAddress(){
-	return addr;
+        return addr;
     }
 
-    public int getPort(){
+    public void setAddr(InetAddress inet){
+        addr = inet;
+    }
+    
+    
+    public int getTcpPort(){
 	return port;
     }
 

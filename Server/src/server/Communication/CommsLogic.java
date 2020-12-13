@@ -21,75 +21,66 @@ import server.Logic.Server;
  * @author Hugo
  */
 public class CommsLogic {
+    private int tcp, udp;
     Server server;
     UdpServer server_udp;
+    InetAddress bd;
     MulticastReceiver m_receiver;
     TcpFileHandler file_handler;
     TcpCommunication tcp_comms;
     Socket  socket;
+    //ServerSocket s_socket;
 
-    public CommsLogic(Server server) {
-        this.server = server;
-        
+    public CommsLogic(int tcp, int udp, InetAddress bd) {
+        this.bd = bd;
+        this.tcp = tcp;
+        this.udp = udp;
+    }
+    
+    public void prepare(){
+        MulticastSocket m_socket = null;
         try {
-            socket = new Socket(server.getAddress(), server.getPort());
-        } catch (IOException ex) {
-            Logger.getLogger(CommsLogic.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            m_socket = new MulticastSocket(5432);
+            server = new Server(tcp, udp);
+            server.setAddr(m_socket.getInetAddress());
+            
+            server_udp = new UdpServer(server, udp);
+            
+            
+            m_socket.joinGroup(InetAddress.getByName("230.30.30.30"));
+            if( m_socket == null)
+                return;
         
-        file_handler = new TcpFileHandler(socket);
+            
+            m_receiver = new MulticastReceiver(m_socket, server, bd);
+            
+            tcp_comms = new TcpCommunication(server.getTcpPort(), new ServerSocket(server.getTcpPort()),m_socket, bd);
+
+        } catch (IOException ex) {
+            
+        }
     }
     
     public void start(){
+        server_udp.run();
+        tcp_comms.run();
+        m_receiver.run();
+    }
+    
+    public void finish(){
         try {
-            MulticastSocket m_socket = null;
-            try {
-                server_udp = new UdpServer(server);
-                m_socket = new MulticastSocket(5432);
-                
-                m_socket.joinGroup(InetAddress.getByName("230.30.30.30"));
-                
-            } catch (IOException ex) {
-                
-            }
-            
-            if( m_socket == null)
-                return;
-            
-            m_receiver = new MulticastReceiver(m_socket, server, server.getAddress(), file_handler);
-            
-            try {
-                tcp_comms = new TcpCommunication(server.getPort(), new ServerSocket(server.getPort()), file_handler,m_socket);
-            } catch (IOException ex) {
-                Logger.getLogger(CommsLogic.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
-            Scanner scanner = new Scanner(System.in);
-            String s;
-            while((s = scanner.nextLine()).equalsIgnoreCase("shutdown")){
-                if(s.equalsIgnoreCase("Clients")){
-                    System.out.println(server.getClients());
-                }
-                
-                if(s.equalsIgnoreCase("Servers")){
-                    System.out.println(ListServer.getServers());
-                }
-            }
-            
             server_udp.terminate();
+            tcp_comms.terminate();
             m_receiver.terminate();
             
             socket.close();
             
         } catch (IOException ex) {
-            Logger.getLogger(CommsLogic.class.getName()).log(Level.SEVERE, null, ex);       
         }
-        
     }
     
-    
-    
-    
-    
-    
+    public String getUsers(){
+        return server.getClients();
+    }
+  
 }

@@ -6,6 +6,7 @@
 package server.Communication;
 
 import Features.Channel;
+import Features.EnterChannel;
 import Features.File;
 import Features.Message;
 import Features.User;
@@ -21,12 +22,11 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import server.Logic.Database.DataBaseFile;
 import server.Logic.Database.DataBaseMessage;
 import server.Logic.Database.DataBaseSentFileUser;
 import server.Logic.Database.DataBaseUser;
+import server.Logic.Database.DatabaseChanneUser;
 import server.Logic.Database.DatabaseChannel;
 import server.Logic.Database.DatabaseSentFileChannel;
 import server.Logic.Database.DatabaseSentMessageUser;
@@ -43,19 +43,18 @@ public class MulticastReceiver extends Thread{
     final static int PORT= 5432;
     public static final String List = "LIST";
     public static final int MAX = 1000;
-    protected TcpFileHandler file_handler;
     protected Server serve_r;
     protected ISendable sendable;
     protected MulticastSocket s = null;
     protected boolean running;
-    protected InetAddress addr;
+    protected InetAddress addr, bd;
     
-    public MulticastReceiver(MulticastSocket s, Server server, InetAddress addr, TcpFileHandler file_handler){
+    public MulticastReceiver(MulticastSocket s, Server server, InetAddress bd){
         this.s = s;
         this.serve_r = server;
         running = true;
-        this.addr = addr;
-        this.file_handler = file_handler;
+        this.addr = server.getAddress();
+        this.bd = bd;
     }
     
     public void terminate(){
@@ -100,6 +99,9 @@ public class MulticastReceiver extends Thread{
                     }else if(obj instanceof RegisterRequest){
                         register((RegisterRequest) obj);
                     
+                    }else if(obj instanceof EnterChannel){
+                        enter((EnterChannel)obj);
+                        
                     }else if(obj instanceof Server){
                         serve_r = (Server)obj;
                         
@@ -126,7 +128,6 @@ public class MulticastReceiver extends Thread{
                     }//ver restantes
                     
                 } catch (ClassNotFoundException ex) {
-                    Logger.getLogger(MulticastReceiver.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
                 
@@ -138,8 +139,10 @@ public class MulticastReceiver extends Thread{
             
             if(!s.isClosed())
                 s.close();
-            Logger.getLogger(MulticastReceiver.class.getName()).log(Level.SEVERE, null, ex);
 
+        }finally{
+            if(!s.isClosed())
+                s.close();
         }
     
     }
@@ -149,14 +152,17 @@ public class MulticastReceiver extends Thread{
         try {
             int rcv;
             int snd;
-            DataBaseMessage.insert(m);
+            DataBaseMessage.insert(m,bd);
             if(m.isToChannel())
-                rcv = DatabaseChannel.getChannelByName(m.getUsernameRecive());
+                rcv = DatabaseChannel.getChannelByName(m.getUsernameRecive(),bd);
             else
-                rcv = DataBaseUser.getUserByName(m.getUsernameRecive());
-            snd = DataBaseUser.getUserByName(m.getUsernameSend());
-            DatabaseSentMessageUser.insert(m, snd, rcv);
-
+                rcv = DataBaseUser.getUserByName(m.getUsernameRecive(),bd);
+            snd = DataBaseUser.getUserByName(m.getUsernameSend(),bd);
+            DatabaseSentMessageUser.insert(m, snd, rcv,bd);
+            
+            
+            MulticastSender ms = new MulticastSender(null, m, s );
+            ms.run();
             return true;
         } catch (SQLException | ClassNotFoundException ex) {
             return false;
@@ -168,24 +174,24 @@ public class MulticastReceiver extends Thread{
             try{
                 int rcv;
                 int snd;
-                DataBaseFile.insert(file);
-                snd = DataBaseUser.getUserByName(file.getSnd());
+                DataBaseFile.insert(file,bd);
+                snd = DataBaseUser.getUserByName(file.getSnd(),bd);
                 if(file.isToChannel()){
-                     rcv = DatabaseChannel.getChannelByName(file.getRcv());
-                     DatabaseSentFileChannel.insert(snd, rcv, file);
+                     rcv = DatabaseChannel.getChannelByName(file.getRcv(),bd);
+                     DatabaseSentFileChannel.insert(snd, rcv, file,bd);
                 }else{
-                    rcv = DataBaseUser.getUserByName(file.getRcv());
-                    DataBaseSentFileUser.insert(snd, rcv,file);
+                    rcv = DataBaseUser.getUserByName(file.getRcv(),bd);
+                    DataBaseSentFileUser.insert(snd, rcv,file,bd);
                 }
 
-                if(!file.isSending()){
-                    file_handler.setDirectoryToSend(new java.io.File(file.getDir()));
-                    file_handler.setFileToSend(file.getFile());
-                    file_handler.send();
-                }else{
-                    file_handler.dirToReceive(new java.io.File(file.getDir()));
-                    file_handler.receive();
-                }
+//                if(!file.isSending()){
+//                    file_handler.setDirectoryToSend(new java.io.File(file.getDir()));
+//                    file_handler.setFileToSend(file.getFile());
+//                    file_handler.send();
+//                }else{
+//                    file_handler.dirToReceive(new java.io.File(file.getDir()));
+//                    file_handler.receive();
+//                }
                 return true;
             } catch (SQLException | ClassNotFoundException ex) {
                 return false;
@@ -198,31 +204,33 @@ public class MulticastReceiver extends Thread{
     private boolean channel(ChannelEditor channelEditor) {
         try {
             Channel channel = new Channel();
-            int idCreator = DataBaseUser.getUserByName(channelEditor.getCreator());
+            int idCreator = DataBaseUser.getUserByName(channelEditor.getCreator(),bd);
             
             if(channelEditor.getNome() == null && channelEditor.getCurrentPassword()== null){
                 channel.setDescricao(channelEditor.getDescricao());
                 channel.setNome(channelEditor.getNewNome());
                 channel.setPassword(channelEditor.getPassword());
                 channel.setIdCreator(idCreator);
-                DatabaseChannel.insert(channel);
+                DatabaseChannel.insert(channel,bd);
                 
             }else if(channelEditor.getNewNome() == null && channelEditor.getPassword() == null && channelEditor.getDescricao()==null){
-                int idChannel = DatabaseChannel.getChannelByName(channelEditor.getNome());
+                int idChannel = DatabaseChannel.getChannelByName(channelEditor.getNome(),bd);
                 channel.setNome(channelEditor.getNome());
                 channel.setPassword(channelEditor.getCurrentPassword());
                 channel.setId(idChannel);
-                DatabaseChannel.delete(channel);
+                DatabaseChannel.delete(channel,bd);
                 
             }else{
-                int idChannel = DatabaseChannel.getChannelByName(channelEditor.getNome());
+                int idChannel = DatabaseChannel.getChannelByName(channelEditor.getNome(),bd);
                 channel.setDescricao(channelEditor.getDescricao());
                 channel.setNome(channelEditor.getNewNome());
                 channel.setPassword(channelEditor.getPassword());
                 channel.setId(idChannel);
-                DatabaseChannel.update(channel);
+                DatabaseChannel.update(channel,bd);
             }  
             
+            MulticastSender ms = new MulticastSender(null, channelEditor, s );
+            ms.run();
             return true;
         } catch (SQLException | ClassNotFoundException ex) {
             return false;
@@ -237,10 +245,34 @@ public class MulticastReceiver extends Thread{
             User user = new User(r.getNome(), r.getPass());
             user.setEmail(r.getEmail());
             
-            DataBaseUser.insert(user);
+            DataBaseUser.insert(user,bd);
 
             return true;
         } catch (SQLException | ClassNotFoundException  ex) {     
+            return false;
+        }
+
+    }
+    
+    private boolean enter(EnterChannel c) {
+        try {
+            int idC = DatabaseChannel.getChannelWithPass(c.getChannel(), c.getPass(), bd);
+            int idU = DataBaseUser.getUserByName(c.getUser(), bd);
+            Channel channel = new Channel();
+            channel.setId(idC);
+            
+            User user = new User(c.getUser(), null);
+            user.setId(idU);
+            
+            
+            if(idC != -1){
+                DatabaseChanneUser.insert(channel, user , bd);
+            }else 
+                return false;
+
+            
+            return true;
+        } catch (SQLException | ClassNotFoundException ex) {
             return false;
         }
 

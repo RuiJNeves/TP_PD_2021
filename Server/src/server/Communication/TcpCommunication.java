@@ -6,6 +6,7 @@
 package server.Communication;
 
 import Features.Channel;
+import Features.EnterChannel;
 import Features.File;
 import Features.Login;
 import Features.Message;
@@ -20,6 +21,7 @@ import interfaces.ISendable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -32,6 +34,7 @@ import server.Logic.Database.DataBaseMessage;
 import server.Logic.Database.DataBaseSentFileUser;
 import server.Logic.Database.DataBaseSentMessageChannel;
 import server.Logic.Database.DataBaseUser;
+import server.Logic.Database.DatabaseChanneUser;
 import server.Logic.Database.DatabaseChannel;
 import server.Logic.Database.DatabaseSentFileChannel;
 import server.Logic.Database.DatabaseSentMessageUser;
@@ -43,6 +46,7 @@ import server.Logic.Database.DatabaseSentMessageUser;
 public class TcpCommunication  implements Runnable{
     public static final int MAX_SIZE = 256;
     private int listeningPort;
+    private InetAddress bd;
     private Socket socket = null;
     private MulticastSocket s;
     private ServerSocket socketEscuta = null;
@@ -52,11 +56,11 @@ public class TcpCommunication  implements Runnable{
     private ObjectInputStream oin = null;
     private boolean running;
 
-    public TcpCommunication(int listeningPort, ServerSocket socketEscuta, TcpFileHandler file_handler, MulticastSocket s) {
+    public TcpCommunication(int listeningPort, ServerSocket socketEscuta, MulticastSocket s, InetAddress bd) {
         this.listeningPort = listeningPort;
         this.socketEscuta = socketEscuta;
-        this.file_handler = file_handler;
         this.s = s;
+        this.bd = bd;
         running = true;
     }
     
@@ -71,6 +75,8 @@ public class TcpCommunication  implements Runnable{
          while(running){  
             try{
                 socket = socketEscuta.accept();
+                file_handler = new TcpFileHandler(socket);
+                
                 oin = new ObjectInputStream(socket.getInputStream());
                 oout = new ObjectOutputStream(socket.getOutputStream());
               
@@ -83,6 +89,8 @@ public class TcpCommunication  implements Runnable{
                        file((File)snd);
                     else if(snd instanceof ChannelEditor)
                         channel((ChannelEditor)snd);
+                    else if(snd instanceof EnterChannel)
+                        enter((EnterChannel)snd);
                 }else if(receivedMsg instanceof IRequest){
                     IRequest req = (IRequest) receivedMsg;
                     if(req instanceof InfoRequest)
@@ -95,6 +103,8 @@ public class TcpCommunication  implements Runnable{
                         login((Login) req);
                     else if(req instanceof RegisterRequest)
                         register((RegisterRequest)req);
+                    
+                        
                 }
             }catch(IOException | ClassNotFoundException e){} 
         }
@@ -104,13 +114,13 @@ public class TcpCommunication  implements Runnable{
         try {
             int rcv;
             int snd;
-            DataBaseMessage.insert(m);
+            DataBaseMessage.insert(m,bd);
             if(m.isToChannel())
-                rcv = DatabaseChannel.getChannelByName(m.getUsernameRecive());
+                rcv = DatabaseChannel.getChannelByName(m.getUsernameRecive(),bd);
             else
-                rcv = DataBaseUser.getUserByName(m.getUsernameRecive());
-            snd = DataBaseUser.getUserByName(m.getUsernameSend());
-            DatabaseSentMessageUser.insert(m, snd, rcv);
+                rcv = DataBaseUser.getUserByName(m.getUsernameRecive(),bd);
+            snd = DataBaseUser.getUserByName(m.getUsernameSend(),bd);
+            DatabaseSentMessageUser.insert(m, snd, rcv,bd);
 
             MulticastSender m_sender = new MulticastSender(null, m, s);
             m_sender.run();
@@ -125,14 +135,14 @@ public class TcpCommunication  implements Runnable{
             try{
                 int rcv;
                 int snd;
-                DataBaseFile.insert(file);
-                snd = DataBaseUser.getUserByName(file.getSnd());
+                DataBaseFile.insert(file,bd);
+                snd = DataBaseUser.getUserByName(file.getSnd(),bd);
                 if(file.isToChannel()){
-                     rcv = DatabaseChannel.getChannelByName(file.getRcv());
-                     DatabaseSentFileChannel.insert(snd, rcv, file);
+                     rcv = DatabaseChannel.getChannelByName(file.getRcv(),bd);
+                     DatabaseSentFileChannel.insert(snd, rcv, file,bd);
                 }else{
-                    rcv = DataBaseUser.getUserByName(file.getRcv());
-                    DataBaseSentFileUser.insert(snd, rcv,file);
+                    rcv = DataBaseUser.getUserByName(file.getRcv(),bd);
+                    DataBaseSentFileUser.insert(snd, rcv,file,bd);
                 }
 
                 if(!file.isSending()){
@@ -154,8 +164,8 @@ public class TcpCommunication  implements Runnable{
     
     private boolean info(InfoRequest req){
         try{
-           ArrayList<String> users = DataBaseUser.getInfo();
-           ArrayList<String> channels = DatabaseChannel.getInfo();
+           ArrayList<String> users = DataBaseUser.getInfo(bd);
+           ArrayList<String> channels = DatabaseChannel.getInfo(bd);
            users.addAll(channels);
            
            oout.writeObject(users);
@@ -169,8 +179,8 @@ public class TcpCommunication  implements Runnable{
 
     private boolean stats(StatsRequest req) {
       try{
-           int id = DatabaseChannel.getChannelByName(req.getChannelName());
-           ArrayList<String> resp = DatabaseChannel.getStats(id);
+           int id = DatabaseChannel.getChannelByName(req.getChannelName(),bd);
+           ArrayList<String> resp = DatabaseChannel.getStats(id,bd);
            oout.writeObject(resp);
            oout.flush();
            
@@ -185,12 +195,12 @@ public class TcpCommunication  implements Runnable{
            int id;
            ArrayList<String> resp;
            if(req.isFromChannel()){
-               id = DatabaseChannel.getChannelByName(req.getOrg());
-               resp = DataBaseSentMessageChannel.getMsgs(id,req.getNumMsgs());
+               id = DatabaseChannel.getChannelByName(req.getOrg(),bd);
+               resp = DataBaseSentMessageChannel.getMsgs(id,req.getNumMsgs(),bd);
            }else{
-               id = DataBaseUser.getUserByName(req.getOrg());
-               int me = DataBaseUser.getUserByName(req.getMe());
-               resp = DatabaseSentMessageUser.getMsgs(id, req.getNumMsgs(), me);
+               id = DataBaseUser.getUserByName(req.getOrg(),bd);
+               int me = DataBaseUser.getUserByName(req.getMe(),bd);
+               resp = DatabaseSentMessageUser.getMsgs(id, req.getNumMsgs(), me,bd);
            }
           
            oout.writeObject(resp);
@@ -205,29 +215,29 @@ public class TcpCommunication  implements Runnable{
     private boolean channel(ChannelEditor channelEditor) {
         try {
             Channel channel = new Channel();
-            int idCreator = DataBaseUser.getUserByName(channelEditor.getCreator());
+            int idCreator = DataBaseUser.getUserByName(channelEditor.getCreator(),bd);
             
             if(channelEditor.getNome() == null && channelEditor.getCurrentPassword()== null){
                 channel.setDescricao(channelEditor.getDescricao());
                 channel.setNome(channelEditor.getNewNome());
                 channel.setPassword(channelEditor.getPassword());
                 channel.setIdCreator(idCreator);
-                DatabaseChannel.insert(channel);
+                DatabaseChannel.insert(channel,bd);
                 
             }else if(channelEditor.getNewNome() == null && channelEditor.getPassword() == null && channelEditor.getDescricao()==null){
-                int idChannel = DatabaseChannel.getChannelByName(channelEditor.getNome());
+                int idChannel = DatabaseChannel.getChannelByName(channelEditor.getNome(),bd);
                 channel.setNome(channelEditor.getNome());
                 channel.setPassword(channelEditor.getCurrentPassword());
                 channel.setId(idChannel);
-                DatabaseChannel.delete(channel);
+                DatabaseChannel.delete(channel,bd);
                 
             }else{
-                int idChannel = DatabaseChannel.getChannelByName(channelEditor.getNome());
+                int idChannel = DatabaseChannel.getChannelByName(channelEditor.getNome(),bd);
                 channel.setDescricao(channelEditor.getDescricao());
                 channel.setNome(channelEditor.getNewNome());
                 channel.setPassword(channelEditor.getPassword());
                 channel.setId(idChannel);
-                DatabaseChannel.update(channel);
+                DatabaseChannel.update(channel,bd);
             }
             
             
@@ -247,7 +257,7 @@ public class TcpCommunication  implements Runnable{
     private boolean login(Login login) {
         try {
             User user;
-            user = DataBaseUser.loginUser(login.getNome(),login.getPass());
+            user = DataBaseUser.loginUser(login.getNome(),login.getPass(),bd);
 
             if(user == null)
                 user = new User(null,null);
@@ -267,7 +277,7 @@ public class TcpCommunication  implements Runnable{
             user.setEmail(r.getEmail());
             
             
-            DataBaseUser.insert(user);
+            DataBaseUser.insert(user,bd);
             
             oout.writeObject(true);
             oout.flush();
@@ -284,5 +294,31 @@ public class TcpCommunication  implements Runnable{
             
             return false;
         }
+    }
+
+    private boolean enter(EnterChannel c) {
+        try {
+            int idC = DatabaseChannel.getChannelWithPass(c.getChannel(), c.getPass(), bd);
+            int idU = DataBaseUser.getUserByName(c.getUser(), bd);
+            Channel channel = new Channel();
+            channel.setId(idC);
+            
+            User user = new User(c.getUser(), null);
+            user.setId(idU);
+            
+            
+            if(idC != -1){
+                DatabaseChanneUser.insert(channel, user , bd);
+                MulticastSender m_sender = new MulticastSender(null, c, s);
+                m_sender.run();
+            }else 
+                return false;
+
+            
+            return true;
+        } catch (SQLException | ClassNotFoundException ex) {
+            return false;
+        }
+
     }
 }
