@@ -14,12 +14,14 @@ import interfaces.ISendable;
 public class ChannelEditor implements ISendable{
     
     private String nome;
+    private String currentPass;
     private String newNome;
     private String password;
     private String descricao;
 
-    public ChannelEditor(String newNome, String nome, String password, String descricao) {
+    public ChannelEditor(String nome, String currentPassword, String newNome, String password, String descricao) {
         this.nome = nome;
+        this.currentPass = currentPassword;
         this.newNome = newNome;
         this.password = password;
         this.descricao = descricao;
@@ -31,6 +33,10 @@ public class ChannelEditor implements ISendable{
      
     public String getNewNome() {
         return newNome;
+    }
+    
+    public String getCurrentPassword() {
+        return currentPass;
     }
 
     public String getPassword() {

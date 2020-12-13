@@ -1,17 +1,15 @@
 package Features;
 
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.Receiver;
+import interfaces.IReceiver;
 
-public class Channel implements Receiver{
 
-    private final int IdCreator=0;
+public class Channel implements IReceiver{
+
+    private int IdCreator;
     private String nome;
     private String password;
     private String descricao;
-    private static int users=0;
-    private static int messages=0;
-    private static int sharedFiles=0;
+    private int id;
 
     
     /*Setters*/
@@ -26,24 +24,23 @@ public class Channel implements Receiver{
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
-
-    public static void setUsers(int users) {
-        Channel.users = users;
-    }
-
-    public static void setMessages(int messages) {
-        Channel.messages = messages;
-    }
-
-    public static void setSharedFiles(int sharedFiles) {
-        Channel.sharedFiles = sharedFiles;
-    }
-
     
+    public void setIdCreator(int id) {
+        IdCreator = id;
+    }
+    
+     public void setId(int id) {
+        this.id = id;
+    }
+
     
     /*Getters*/
     public int getIdCreator() {
         return IdCreator;
+    }
+    
+     public int getId() {
+        return id;
     }
 
     public String getNome() {
@@ -57,29 +54,4 @@ public class Channel implements Receiver{
     public String getDescricao() {
         return descricao;
     }
-
-    public static int getUsers() {
-        return users;
-    }
-
-    public static int getMessages() {
-        return messages;
-    }
-
-    public static int getSharedFiles() {
-        return sharedFiles;
-    }
-    
-    
-    
-    @Override
-    public void send(MidiMessage message, long timeStamp) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
 }

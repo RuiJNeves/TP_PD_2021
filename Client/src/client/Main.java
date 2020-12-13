@@ -19,7 +19,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-         ComsLogic l;
+        ComsLogic l;
         if(args.length < 2){
             System.out.println("Sintaxe inválida! Indique IP e PORTO do servidor");
         }else{
@@ -36,6 +36,6 @@ public class Main {
                  }
                 default -> System.out.println("Ocorreu um erro inesperado! Tente outra vez!");
             } 
-        }   
+        } 
     }
 }

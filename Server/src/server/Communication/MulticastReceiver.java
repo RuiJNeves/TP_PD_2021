@@ -87,8 +87,8 @@ public class MulticastReceiver extends Thread{
                         
                         //thread que envia o ping tb apaga os "Mortos"
                         PingRequest request = (PingRequest) obj;
-                        MulticastSender ms = MulticastSender(new PingResponse(myServer.getAddress()), null, s, InetAddress.getByName("230.30.30.30") );
-                        ms.run();
+                        //MulticastSender ms = MulticastSender(new PingResponse(myServer.getAddress()), null, s, InetAddress.getByName("230.30.30.30") );
+                        //ms.run();
                         
                     }else if(obj instanceof PingResponse){
                         

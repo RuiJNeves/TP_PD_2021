@@ -10,8 +10,18 @@ public class Message implements ISendable {
     private String usernameRecive;
     private Date date;
     private String message;
-
+    private int id;
+    
+    public Message(int id, String snd, String rcv, String msg){
+        this.id = id;
+        usernameSend = snd;
+        usernameRecive = rcv;
+        message = msg;
+    }
+    
+    
     public Message(String snd, String rcv, String msg){
+        id = 0;
         usernameSend = snd;
         usernameRecive = rcv;
         message = msg;
@@ -33,6 +43,10 @@ public class Message implements ISendable {
     public void setMessage(String message) {
         this.message = message;
     }
+    
+    public void setId(int id) {
+        this.id = id;
+    }
 
     
     
@@ -51,6 +65,10 @@ public class Message implements ISendable {
 
     public String getMessage() {
         return message;
+    }
+    
+    public int getId() {
+        return id;
     }
 
     @Override

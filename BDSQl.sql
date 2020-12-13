@@ -5,10 +5,11 @@ USE `PD_20-21` ;
 -- Table `PD_20-21`.`User`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `PD_20-21`.`User` (
-  `idUser` INT NOT NULL AUTO_INCREMENT,
-  `Name` VARCHAR(45) NOT NULL,
-  `Email` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`idUser`));
+  idUser INT NOT NULL AUTO_INCREMENT,
+  Name VARCHAR(45) NOT NULL,
+  Email VARCHAR(45) NOT NULL,
+  Password VARCHAR(45) NOT NULL,
+  PRIMARY KEY (idUser));
 
 -- -----------------------------------------------------
 -- Table `PD_20-21`.`Channel`
@@ -18,9 +19,6 @@ CREATE TABLE IF NOT EXISTS `PD_20-21`.`Channel` (
   `Name` VARCHAR(20) NOT NULL,
   `Password` VARCHAR(45) NOT NULL,
   `Description` VARCHAR(500) NULL,
-  `nUsers` INT NOT NULL,
-  `nMessages` INT NOT NULL,
-  `nSharedFiles` INT NOT NULL,
   `idCreator` INT NOT NULL,
   PRIMARY KEY (`idChannel`),
   CONSTRAINT `fk_Channel_User1`

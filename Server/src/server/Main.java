@@ -1,4 +1,4 @@
-
+package server;
 
 /*
  * To change this license header, choose License Headers in Project Properties.
@@ -9,6 +9,8 @@
 import java.io.*;
 import java.net.*;
 import server.Communication.TcpFileHandler;
+import java.sql.*;
+import server.Logic.Database.DBConnection;
 
 /**
  *
@@ -21,7 +23,7 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args){
-        String p = System.getProperty("user.dir");
+        /*String p = System.getProperty("user.dir");
         File savingDirectory = new File(p);
         
         BufferedReader in = null;
@@ -44,6 +46,18 @@ public class Main {
             
         }catch(Exception e){
             System.out.println("Error" + e.getMessage());
+        }*/
+        
+        Statement stmt = null;
+        try{
+         stmt = DBConnection.getCon().getConnection().createStatement();
+
+            String sql = "Insert Into User(Name, Email)"
+                    + "Values (\"Fabio\",\"asjd\");";
+
+            stmt.executeQuery(sql);
+        }catch(Exception ex){
+            
         }
     }
 }

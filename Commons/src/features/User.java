@@ -1,16 +1,14 @@
 package Features;
 
-import java.lang.String;
-import javax.sound.midi.MidiMessage;
-import javax.sound.midi.Receiver;
+import interfaces.IReceiver;
 
-public class User implements Receiver{
+
+public class User implements IReceiver{
     
-    private final int Id=0;
+    private int id;
     private String nome;
     private String password;
-    private int token;
-    private String imagePath;
+    private String email;
     
     
     /*Setters*/
@@ -21,19 +19,19 @@ public class User implements Receiver{
     public void setPassword(String password) {
         this.password = password;
     }
-
-    public void setToken(int token) {
-        this.token = token;
+    
+    public void setEmail(String mail) {
+        this.email = mail;
     }
-
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    
+    public void setId(int id) {
+        this.id = id;
     }
 
     
     /*Getters*/
     public int getId() {
-        return Id;
+        return id;
     }
 
     public String getNome() {
@@ -43,26 +41,8 @@ public class User implements Receiver{
     public String getPassword() {
         return password;
     }
-
-    public int getToken() {
-        return token;
-    }
-
-    public String getImagePath() {
-        return imagePath;
-    }
-
     
-    @Override
-    public void send(MidiMessage message, long timeStamp) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public String getEmail() {
+        return email;
     }
-
-    @Override
-    public void close() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-    
-    
-    
 }

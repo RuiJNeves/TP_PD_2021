@@ -75,8 +75,8 @@ public class Logic {
         return cl.getInfo(req);
     }
 
-    public void sendChannel(String nn, String n, String p, String d) {
-        ChannelEditor edt = new ChannelEditor(nn, n, p, d);
+    public void sendChannel(String n, String cp, String nn, String p, String d) {
+        ChannelEditor edt = new ChannelEditor(n, cp, nn, p, d);
         cl.sendChannel(edt);
     }
 }

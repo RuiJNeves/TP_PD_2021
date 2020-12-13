@@ -113,13 +113,15 @@ public class TextInterface {
     private void editChannel() {
         System.out.println("Indique o nome do canal a editar");
         String nome = readString();
+        System.out.println("Indique a password");
+        String cp = readString();
         System.out.println("Indique o novo nome ");
         String novo = readString();
         System.out.println("Indique a nova password");
         String novaPass = readString();
         System.out.println("Indique a nova descricao");
         String desc = readString();
-        l.sendChannel(nome, novo, novaPass, desc);
+        l.sendChannel(nome, cp, novo, novaPass, desc);
     }
 
     private void createChannel() {
@@ -129,15 +131,15 @@ public class TextInterface {
         String novaPass = readString();
         System.out.println("Indique a descricao");
         String desc = readString();
-        l.sendChannel(null, nome, novaPass, desc);
+        l.sendChannel(null, null, nome, novaPass, desc);
     }
 
     private void deleteChannel() {
         System.out.println("Indique o nome ");
         String nome = readString();
         System.out.println("Indique a password");
-        String novaPass = readString();
-        l.sendChannel(nome, null, novaPass, null);
+        String pass = readString();
+        l.sendChannel(nome, pass, null, null, null);
     }
 
     private void listInfo() {
