@@ -18,7 +18,7 @@ import java.util.Scanner;
 public class TextInterface {
     
     private final String[] MENU = {"Enviar Mensagem", "Enviar Ficheiro", "Receber Mensagen", "Download Ficheiro", "Criar Canal", 
-                                    "Editar Canal", "Eliminar Canal", "Listar Canais/Utilizadores","Estatisticas"};
+                                    "Editar Canal", "Eliminar Canal", "Listar Canais/Utilizadores","Estatisticas", "Entrar num canal"};
     private final Scanner s;
     private Logic l;
     
@@ -78,6 +78,7 @@ public class TextInterface {
             case 7 -> deleteChannel();
             case 8 -> listInfo();
             case 9 -> stats();
+            case 10 -> entrarEmCanal();
             default -> {return;}
         }
     }
@@ -193,5 +194,13 @@ public class TextInterface {
         String email = readString();
         RegisterRequest reg = new RegisterRequest(nome, pass, email);
         return l.register(reg);
+    }
+
+    private void entrarEmCanal() {
+        System.out.println("Indique o nome do canal:");
+        String c = readString();
+        System.out.println("Indique a password");
+        String p = readString();
+        l.enterChannel(c, p);
     }
 }
