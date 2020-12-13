@@ -34,13 +34,13 @@ public class MulticastReceiver extends Thread{
     protected ISendable sendable;
     protected MulticastSocket s = null;
     protected boolean running;
+    protected InetAddress addr
     
-    public MulticastReceiver(ISendable sendable, MulticastSocket s, Server server){
-        this.sendable = sendable;
+    public MulticastReceiver(MulticastSocket s, Server server, InetAddress addr){
         this.s = s;
         this.serve_r = server;
-        running = false;
-        
+        running = true;
+        this.addr = addr;
     }
     
     public void terminate(){
@@ -67,7 +67,6 @@ public class MulticastReceiver extends Thread{
                 pkt = new DatagramPacket(new byte[MAX], MAX);
                 s.receive(pkt);
                 
-                //msg = new String(pkt.getData(), 0, pkt.getLength());
                 try{
                     in = new ObjectInputStream(new ByteArrayInputStream(pkt.getData(), 0, pkt.getLength()));
                     obj = in.readObject();
@@ -83,9 +82,8 @@ public class MulticastReceiver extends Thread{
                         
                     }else if(obj instanceof PingRequest){
                         
-                        //thread que envia o ping tb apaga os "Mortos"
                         PingRequest request = (PingRequest) obj;
-                        MulticastSender ms = MulticastSender(new PingResponse(server.getAddress()), null, s, InetAddress.getByName("230.30.30.30") );
+                        MulticastSender ms = new MulticastSender(new PingResponse(addr), null, s );
                         ms.run();
                         
                     }else if(obj instanceof PingResponse){

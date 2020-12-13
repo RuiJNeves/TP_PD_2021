@@ -32,26 +32,19 @@ public class MulticastSender extends Thread{
     private static final String PING = "PING";
     
     final static int PORT= 5432;
-    //boolean running = true;
     DatagramPacket dgram;
-    protected InetAddress group;
     protected ISendable user_sendable;
     protected IServerSendable sendable;
     protected MulticastSocket m_socket = null;
     
-    public MulticastSender(IServerSendable sendable, ISendable user_sendable, MulticastSocket s, InetAddress group ){
+    public MulticastSender(IServerSendable sendable, ISendable user_sendable, MulticastSocket s){
         if(s == null) return;
         this.m_socket = s;
         this.sendable =sendable;
-        this.group = group; //do i need this???
         this.user_sendable = user_sendable;
         
     }
     
-    /*public void terminate()
-    {                
-        running = false;
-    }*/
     
     @Override
     public void run(){
@@ -61,30 +54,28 @@ public class MulticastSender extends Thread{
         
         try {
             
-            //while(running){//eu quero isto sempre a correr?
-                pk = new DatagramPacket(new byte[MAX], MAX);
-                try {
-                    buffer = new ByteArrayOutputStream();
-                    oout = new ObjectOutputStream(buffer);
-                    
-                    if(user_sendable != null){           
-                        oout.writeObject(user_sendable);
-                        
-                    }else if(sendable != null){               
-                        oout.writeObject(sendable);
-                    }else
-                        oout.writeObject(PING);
+            pk = new DatagramPacket(new byte[MAX], MAX);
+            try {
+                buffer = new ByteArrayOutputStream();
+                oout = new ObjectOutputStream(buffer);
 
-                    oout.flush(); 
-                    oout.close();
-                    
-                    pk.setData(buffer.toByteArray());
-                    pk.setLength(buffer.size());
-                    m_socket.send(pk); 
-                } catch (IOException ex) {
-                    java.util.logging.Logger.getLogger(MulticastReceiver.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-                }
-            //}
+                if(user_sendable != null){           
+                    oout.writeObject(user_sendable);
+
+                }else if(sendable != null){               
+                    oout.writeObject(sendable);
+                }else
+                    oout.writeObject(PING);
+
+                oout.flush(); 
+                oout.close();
+
+                pk.setData(buffer.toByteArray());
+                pk.setLength(buffer.size());
+                m_socket.send(pk); 
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(MulticastReceiver.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
                        
         }finally{
             

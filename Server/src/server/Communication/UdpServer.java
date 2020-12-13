@@ -19,7 +19,7 @@ import server.Logic.Server;
  *
  * @author Hugo
  */
-public class UdpServer {
+public class UdpServer extends Thread{
     Server server;
     public static int MAX_SIZE = 1000;
     
@@ -39,11 +39,12 @@ public class UdpServer {
         
     }
         
-    /*Recebe o porto*/
-    public void ListentUDP(int lp) throws IOException, ClassNotFoundException {
+    
+     @Override
+    public void run(){
         
         try{
-            socket = new DatagramSocket(lp);
+            socket = new DatagramSocket(socket.getPort());
             
             while(true){
                 packet = new DatagramPacket(new byte[MAX_SIZE], MAX_SIZE);
@@ -82,8 +83,5 @@ public class UdpServer {
             System.out.println("O porto de escuta deve ser um inteiro positivo.");
         }
     }
-    
-
-
-    
+     
 }
