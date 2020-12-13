@@ -5,6 +5,7 @@
  */
 package client.Logic.Communication;
 
+import Features.EnterChannel;
 import Features.Login;
 import Features.Message;
 import Features.User;
@@ -167,5 +168,10 @@ public class ComsLogic {
         } catch (IOException | ClassNotFoundException ex) {
             return false;
         }
+    }
+
+    public void enterChannel(EnterChannel ec) {
+       TCPCommunicationClient comClient = new TCPCommunicationClient(tcpSocket);
+       comClient.sendEnterChannel(ec);
     }
 }

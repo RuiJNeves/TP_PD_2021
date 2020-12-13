@@ -82,4 +82,9 @@ public class Logic {
         
         return cl.register(reg);
     }
+
+    public void enterChannel(String c, String p) {
+        EnterChannel ec = new EnterChannel(currentUser.getNome(), c, p);
+        cl.enterChannel(ec);
+    }
 }

@@ -5,6 +5,7 @@
  */
 package client.Logic.Communication.TCP;
 
+import Features.EnterChannel;
 import Features.Message;
 import Helpers.ChannelEditor;
 import interfaces.ISendable;
@@ -38,5 +39,12 @@ public class TCPCommunicationClient {
         Thread t = new Thread(snd);
         t.start();
         
+    }
+
+    public void sendEnterChannel(EnterChannel ec) {
+        content = ec;
+        TCPSendableSender snd = new TCPSendableSender(s, ec);
+        Thread t = new Thread(snd);
+        t.start();
     }
 }
