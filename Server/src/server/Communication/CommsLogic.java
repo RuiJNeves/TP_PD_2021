@@ -56,7 +56,7 @@ public class CommsLogic {
             if( m_socket == null)
                 return;
             
-            m_receiver = new MulticastReceiver(m_socket, server, server.getAddress());
+            m_receiver = new MulticastReceiver(m_socket, server, server.getAddress(), file_handler);
             
             try {
                 tcp_comms = new TcpCommunication(server.getPort(), new ServerSocket(server.getPort()), file_handler,m_socket);

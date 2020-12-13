@@ -16,11 +16,13 @@ public class MessagesRequest implements IRequest{
     private int numMsgs;
     private boolean fromChannel;
     private String me;
+    
     public MessagesRequest(String org, int numMsgs, boolean channel, String me){
         this.me = me;
         this.org = org;
         fromChannel = channel;
         this.numMsgs = numMsgs;
+        
     }
 
     public String getOrg() {

@@ -64,4 +64,18 @@ public class DataBaseUser {
         r.close();
         return ret;
     }
+    
+    public static User loginUser(String name, String pass) throws SQLException, ClassNotFoundException{
+        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+        String sql = "SELECT * FROM User where Name=\""+ name+"\" and Password=\"" + pass +"\";";
+        ResultSet r = stmt.executeQuery(sql);
+        User user = null;
+        while(r.next()){
+            user = new User(r.getString(2), r.getString(4));
+            user.setId(r.getInt(1));
+            user.setEmail(r.getString(3));
+        }
+        r.close();
+        return user;
+    }
 }

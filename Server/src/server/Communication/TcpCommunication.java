@@ -7,23 +7,25 @@ package server.Communication;
 
 import Features.Channel;
 import Features.File;
+import Features.Login;
 import Features.Message;
+import Features.User;
 import Helpers.ChannelEditor;
 import Helpers.InfoRequest;
-import Helpers.MessagesRequest;
 import Helpers.StatsRequest;
+import Helpers.MessagesRequest;
 import interfaces.IRequest;
 import interfaces.ISendable;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.InetAddress;
 import java.net.MulticastSocket;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import server.Logic.Database.DataBaseFile;
 import server.Logic.Database.DataBaseMessage;
 import server.Logic.Database.DataBaseSentFileUser;
@@ -45,27 +47,25 @@ public class TcpCommunication  implements Runnable{
     private ServerSocket socketEscuta = null;
     private Object receivedMsg;
     private TcpFileHandler file_handler;
+    private ObjectOutputStream oout = null;
+    private ObjectInputStream oin = null;
     private boolean running;
 
     public TcpCommunication(int listeningPort, ServerSocket socketEscuta, TcpFileHandler file_handler, MulticastSocket s) {
         this.listeningPort = listeningPort;
         this.socketEscuta = socketEscuta;
-<<<<<<< HEAD
         this.file_handler = file_handler;
         this.s = s;
-=======
         running = true;
     }
     
     public void terminate(){
         running = false;
->>>>>>> d75c692db45c63144c40e29902ec281b7c4a5b93
     }
 
     @Override
     public void run() {
-        ObjectOutputStream oout = null;
-        ObjectInputStream oin = null;
+        
      
          while(running){  
             try{
@@ -84,19 +84,14 @@ public class TcpCommunication  implements Runnable{
                         channel((ChannelEditor)snd);
                 }else if(receivedMsg instanceof IRequest){
                     IRequest req = (IRequest) receivedMsg;
-<<<<<<< HEAD
                     if(req instanceof InfoRequest)
-                        System.out.println("");
-=======
-                    if(req instanceof ChannelEditor)
-                        System.out.println("");
-                    else if(req instanceof InfoRequest)
-                        info((InfoRequest)req);
->>>>>>> d75c692db45c63144c40e29902ec281b7c4a5b93
+                        info((InfoRequest) req);
                     else if(req instanceof StatsRequest)
                         stats((StatsRequest)req);
                     else if(req instanceof MessagesRequest)
                         messages((MessagesRequest)req);
+                    else if(req instanceof Login)
+                        login((Login) req);
                 }
             }catch(IOException | ClassNotFoundException e){} 
         }
@@ -137,26 +132,20 @@ public class TcpCommunication  implements Runnable{
                     DataBaseSentFileUser.insert(snd, rcv,file);
                 }
 
-
+                if(!file.isSending()){
+                    file_handler.setDirectoryToSend(new java.io.File(file.getDir()));
+                    file_handler.setFileToSend(file.getFile());
+                    file_handler.send();
+                }else{
+                    file_handler.dirToReceive(new java.io.File(file.getDir()));
+                    file_handler.receive();
+                }
                 return true;
             } catch (SQLException | ClassNotFoundException ex) {
                 return false;
             }
-<<<<<<< HEAD
             
-            if(!file.isSending()){
-               file_handler.setDirectoryToSend(new java.io.File(file.getDir()));
-               file_handler.setFileToSend(file.getFile());
-               file_handler.send();
-            }else{
-                file_handler.dirToReceive(new java.io.File(file.getDir()));
-                file_handler.receive();
-            }
-                
-           
-=======
         }else
->>>>>>> d75c692db45c63144c40e29902ec281b7c4a5b93
             return true;
     }
     
@@ -165,20 +154,25 @@ public class TcpCommunication  implements Runnable{
            ArrayList<String> users = DataBaseUser.getInfo();
            ArrayList<String> channels = DatabaseChannel.getInfo();
            users.addAll(channels);
+           
+           oout.writeObject(users);
+           oout.flush();
            //enviar os users como resposta
            return true;
-        } catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException | ClassNotFoundException | IOException ex) {
             return false;
-        }
+        } 
     }
 
     private boolean stats(StatsRequest req) {
       try{
            int id = DatabaseChannel.getChannelByName(req.getChannelName());
            ArrayList<String> resp = DatabaseChannel.getStats(id);
-           //enviar resp como resposta
+           oout.writeObject(resp);
+           oout.flush();
+           
            return true;
-        } catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException | ClassNotFoundException |IOException ex) {
             return false;
         }
     }
@@ -196,12 +190,13 @@ public class TcpCommunication  implements Runnable{
                resp = DatabaseSentMessageUser.getMsgs(id, req.getNumMsgs(), me);
            }
           
+           oout.writeObject(resp);
+           oout.flush();
            //enviar resp como resposta
            return true;
-        } catch (SQLException | ClassNotFoundException ex) {
+        } catch (SQLException | ClassNotFoundException | IOException ex) {
             return false;
-        }
-        
+        } 
     }
 
     private boolean channel(ChannelEditor channelEditor) {
@@ -244,5 +239,22 @@ public class TcpCommunication  implements Runnable{
         }
         
         
+    }
+
+    private boolean login(Login login) {
+        try {
+            User user;
+            user = DataBaseUser.loginUser(login.getNome(),login.getPass());
+
+            if(user == null)
+                user = new User(null,null);
+            
+            oout.writeObject(user);
+            oout.flush();
+            
+            return true;
+        } catch (SQLException | ClassNotFoundException |IOException ex) {
+            return false;
+        } 
     }
 }

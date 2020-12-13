@@ -5,11 +5,13 @@
  */
 package Features;
 
+import interfaces.IRequest;
+
 /**
  *
  * @author ruizi
  */
-public class Login {
+public class Login implements IRequest{
     
     private final String nome;
     private final String password;

@@ -6,10 +6,7 @@ package server;
  * and open the template in the editor.
  */
 
-<<<<<<< HEAD
 
-=======
->>>>>>> d75c692db45c63144c40e29902ec281b7c4a5b93
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.logging.Level;
