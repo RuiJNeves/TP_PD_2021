@@ -16,10 +16,24 @@ public class File implements ISendable{
     int id;
     String file;
     String dir;
+    boolean toChannel;
+    String snd;
+    String rcv;
 
-    public File(String file, String dir) {
+    public File(String file, String dir, boolean toChannel, String snd, String rcv) {
         this.file = file;
         this.dir = dir;
+        this.toChannel = toChannel;
+        this.snd = snd;
+        this.rcv = rcv;
+    }
+
+    public String getSnd() {
+        return snd;
+    }
+
+    public String getRcv() {
+        return rcv;
     }
 
     public int getId() {
@@ -36,5 +50,9 @@ public class File implements ISendable{
     
     public String getDir() {
         return dir;
+    }
+    
+    public boolean isToChannel() {
+        return toChannel;
     }
 }

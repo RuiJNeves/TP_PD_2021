@@ -15,31 +15,12 @@ import java.time.LocalDate;
 public class DataBaseMessage {
     
 
-    public void create(Message txt) throws SQLException, ClassNotFoundException{
+    public static void insert(Message txt) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
         stmt = DBConnection.getCon().getConnection().createStatement();
         LocalDate date = LocalDate.now();
         String sql = "Insert Into Message(Text, Date)"
                     + "Values (\"" + txt.getMessage() + "\", "+ date + ");";
-
-        stmt.executeQuery(sql);
-    }
-    
-    public void delete(int id) throws SQLException, ClassNotFoundException{
-        Statement stmt = null;
-        stmt = DBConnection.getCon().getConnection().createStatement();
-        String sql = "Delete from Message "
-                    + "Where idMessage="+ id +";";
-
-        stmt.executeQuery(sql);
-    }
-    
-    public void update(Message txt) throws SQLException, ClassNotFoundException{
-        Statement stmt = null;
-        stmt = DBConnection.getCon().getConnection().createStatement();
-        String sql = "Update Message "
-                    + "Set Text=\""+ txt.getMessage()+"\", "
-                    + "Where idMessage="+ txt.getId() + ";";
 
         stmt.executeQuery(sql);
     }

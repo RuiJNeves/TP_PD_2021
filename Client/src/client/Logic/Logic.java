@@ -5,12 +5,10 @@
  */
 package client.Logic;
 
-import client.Logic.Communication.TCP.TCPFileHandler;
 import Features.*;
 import Helpers.*;
 import client.Logic.Communication.*;
 import java.io.File;
-import java.net.Socket;
 import java.util.List;
 
 /**
@@ -28,10 +26,10 @@ public class Logic {
         isLogged = false;
     }
 
-    public void sendMsg(String rcv, String msg) {
+    public void sendMsg(String rcv, String msg, boolean toChannel) {
         Message m;
         if (isLogged) {
-            m = new Message(currentUser.getNome(), rcv, msg);
+            m = new Message(currentUser.getNome(), rcv, msg, toChannel);
         }
 
     }
@@ -49,8 +47,8 @@ public class Logic {
         return r != null;
     }
 
-    public void sendMessage(String dest, String msg) {
-        Message m = new Message(currentUser.getNome(), dest, msg);
+    public void sendMessage(String dest, String msg, boolean toChannel) {
+        Message m = new Message(currentUser.getNome(), dest, msg, toChannel);
         cl.sendMsg(m);
 
     }

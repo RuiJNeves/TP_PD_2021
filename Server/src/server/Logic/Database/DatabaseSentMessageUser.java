@@ -15,10 +15,10 @@ import java.sql.Statement;
  */
 public class DatabaseSentMessageUser {
     
-      public static void insert(Message m, User snd, User rcv) throws SQLException, ClassNotFoundException{
+      public static void insert(Message m, int snd, int rcv) throws SQLException, ClassNotFoundException{
         Statement stmt = DBConnection.getCon().getConnection().createStatement();
         String sql = "Insert Into SentMessageUser(idMessage, idSender, idReceiver) "
-                + "Values (\""+m.getId()+"\", \""+ snd.getId() + "\","+rcv.getId() + ");";
+                + "Values (\""+m.getId()+"\", \""+ snd + "\","+rcv+ ");";
         stmt.executeQuery(sql);
     }
 }

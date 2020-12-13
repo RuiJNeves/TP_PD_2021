@@ -34,4 +34,13 @@ public class DatabaseChannel {
         stmt.executeQuery(sql);
     }
     
+    public static int getChannelByName(String s) throws SQLException, ClassNotFoundException{
+        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+        String sql = "SELECT TOP 1 * FROM Channel WHERE Name = \"" + s + "\";";
+        ResultSet r = stmt.executeQuery(sql);
+        int ret =  Integer.parseInt(r.getArray(0).toString());
+        r.close();
+        return ret;
+    }
+    
 }

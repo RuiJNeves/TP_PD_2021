@@ -13,11 +13,11 @@ import Features.*;
  * @author Hugo
  */
 public class DataBaseSentFileUser {
-    public void create(User userSender, User userReceiver , File file) throws SQLException, ClassNotFoundException{
+    public static void insert (int userSender, int userReceiver , File file) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
         stmt = DBConnection.getCon().getConnection().createStatement();
         String sql = "Insert Into SentMessageChannel(File_idFile, idSender , idReceiver)"
-                    + "Values (" + file.getId() + ", "+ userSender.getId() +", "+ userReceiver.getId() + ");";
+                    + "Values (" + file.getId() + ", "+ userSender +", "+ userReceiver + ");";
 
         stmt.executeQuery(sql);
     }

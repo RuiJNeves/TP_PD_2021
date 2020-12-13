@@ -74,10 +74,12 @@ public class TextInterface {
 
     private void sendMsg() {
         System.out.println("Indique o destinario:");
-        String rcv = s.nextLine();
+        String rcv = readString();
         System.out.println("Indique o conteúdo:");
-        String msg = s.nextLine();
-        l.sendMessage(rcv, msg);
+        String msg =  readString();
+        System.out.println("E para canl? (1 - Sim, 2 - Nao)");
+        int c =  readInt();
+        l.sendMessage(rcv, msg, (c==1));
     }
 
     private void sendFile() {

@@ -6,7 +6,7 @@ USE `PD_20-21` ;
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `PD_20-21`.`User` (
   idUser INT NOT NULL AUTO_INCREMENT,
-  Name VARCHAR(45) NOT NULL,
+  Name VARCHAR(45) UNIQUE NOT NULL,
   Email VARCHAR(45) NOT NULL,
   Password VARCHAR(45) NOT NULL,
   PRIMARY KEY (idUser));
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `PD_20-21`.`User` (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `PD_20-21`.`Channel` (
   `idChannel` INT NOT NULL AUTO_INCREMENT,
-  `Name` VARCHAR(20) NOT NULL,
+  `Name` VARCHAR(20) NOT NULL UNIQUE,
   `Password` VARCHAR(45) NOT NULL,
   `Description` VARCHAR(500) NULL,
   `idCreator` INT NOT NULL,

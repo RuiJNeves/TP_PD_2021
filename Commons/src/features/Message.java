@@ -10,8 +10,10 @@ public class Message implements ISendable {
     private String usernameRecive;
     private Date date;
     private String message;
+    private boolean toChannel;
     
-    public Message(int id, String snd, String rcv, String msg){
+    public Message(int id, String snd, String rcv, String msg,  boolean channel){
+        toChannel = channel;
         this.id = id;
         usernameSend = snd;
         usernameRecive = rcv;
@@ -19,8 +21,9 @@ public class Message implements ISendable {
     }
     
     
-    public Message(String snd, String rcv, String msg){
+    public Message(String snd, String rcv, String msg, boolean channel){
         id = 0;
+        toChannel = channel;
         usernameSend = snd;
         usernameRecive = rcv;
         message = msg;
@@ -68,6 +71,10 @@ public class Message implements ISendable {
     
     public int getId() {
         return id;
+    }
+    
+    public boolean isToChannel() {
+        return toChannel;
     }
 
     @Override

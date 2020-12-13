@@ -14,11 +14,11 @@ import java.sql.*;
  */
 public class DatabaseSentFileChannel {
     
-    public static void insert(User userSender, Channel c, File file ) throws SQLException, ClassNotFoundException{
+    public static void insert(int userSender, int c, File file ) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
         stmt = DBConnection.getCon().getConnection().createStatement();
         String sql = "Insert Into SentMessageChannel(idFile, idChannel , User_idUser) " 
-                + "Values(" + file.getId() + ", " + c.getId() + ", " + userSender.getId() + ");";
+                + "Values(" + file.getId() + ", " + c + ", " + userSender + ");";
         
 
         stmt.executeQuery(sql);
