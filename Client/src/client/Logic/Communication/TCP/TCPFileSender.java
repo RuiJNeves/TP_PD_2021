@@ -7,6 +7,9 @@ package client.Logic.Communication.TCP;
 
 import java.io.*;
 import java.net.*;
+import Features.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -18,10 +21,10 @@ public class TCPFileSender implements Runnable{
     final static int TIMEOUT = 5; //5ms
     
     Socket sckt;
-    File fl;
+    java.io.File fl;
     String fileName;
     
-    public TCPFileSender(Socket s, File f, String fname){
+    public TCPFileSender(Socket s, java.io.File f, String fname){
         sckt = s;
         fl = f;
         fileName = fname;
@@ -42,26 +45,30 @@ public class TCPFileSender implements Runnable{
             in = new BufferedReader(new InputStreamReader(sckt.getInputStream()));
             out = sckt.getOutputStream();
             
-            canonicalPath = new File(fl + File.separator + fileName).getCanonicalPath();
+            canonicalPath = new java.io.File(fl + java.io.File.separator + fileName).getCanonicalPath();
             
-            if(canonicalPath.startsWith(fl.getCanonicalPath()+File.separator)){
-                System.out.println("Error");
+            if(canonicalPath.startsWith(fl.getCanonicalPath()+ java.io.File.separator)){
                 return;
             }
+            ObjectOutputStream oout = new ObjectOutputStream(sckt.getOutputStream());
+            oout.writeObject(new Features.File(fileName, canonicalPath));
             
-            requestedStream = new FileInputStream(canonicalPath);
-            while((nBytes = requestedStream.read(chunk)) > 0){
-                out.write(chunk);
+            ObjectInputStream oin = new ObjectInputStream(sckt.getInputStream());
+            boolean resp = (boolean)oin.readObject();
+
+            if(resp){
+                requestedStream = new FileInputStream(canonicalPath);
+                while((nBytes = requestedStream.read(chunk)) > 0){
+                    out.write(chunk);
+                }
             }
-            System.out.println("File transfered");
-        }catch(Exception e){
-            System.out.println("Erro: " + e.getMessage());
+         
+        }catch(IOException | ClassNotFoundException e){
+           
         }finally{
             try{
                 if(requestedStream != null)
-                    requestedStream.close();
-                
-                sckt.close(); //temos de pensar isto
+                    requestedStream.close();   
             }catch(IOException e){}
         }
     }

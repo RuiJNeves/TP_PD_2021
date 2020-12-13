@@ -5,17 +5,21 @@
  */
 package Features;
 
+import interfaces.ISendable;
+
 /**
  *
  * @author Hugo
  */
-public class File {
+public class File implements ISendable{
 
     int id;
     String file;
+    String dir;
 
-    public File(String file) {
+    public File(String file, String dir) {
         this.file = file;
+        this.dir = dir;
     }
 
     public int getId() {
@@ -28,5 +32,9 @@ public class File {
 
     public String getFile() {
         return file;
+    }
+    
+    public String getDir() {
+        return dir;
     }
 }

@@ -10,7 +10,6 @@ public class Message implements ISendable {
     private String usernameRecive;
     private Date date;
     private String message;
-    private int id;
     
     public Message(int id, String snd, String rcv, String msg){
         this.id = id;
@@ -48,10 +47,6 @@ public class Message implements ISendable {
         this.id = id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     
     
     /*Getters*/
@@ -71,10 +66,6 @@ public class Message implements ISendable {
         return message;
     }
     
-    public int getId() {
-        return id;
-    }
-
     public int getId() {
         return id;
     }

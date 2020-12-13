@@ -62,7 +62,7 @@ public class TCPFileReceiver implements Runnable{
                 while((nBytes = in.read(buffer)) > 0){
                     fout.write(buffer,0,nBytes);
                 }
-            }catch(Exception e){
+            }catch(IOException e){
                 System.out.println("Erro - " + e.getMessage());
             }
         }catch(Exception e){
