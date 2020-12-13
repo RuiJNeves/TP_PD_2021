@@ -34,9 +34,9 @@ public class Logic {
 
     }
 
-    public void sendFile(String file, String dir, String s) {
+    public void sendFile(String file, String dir, String s, boolean toChannel) {
         File f = new File(dir);
-        cl.sendFile(file, f, s);
+        cl.sendFile(file, f, currentUser.getNome(), toChannel, s);
     }
 
     public boolean login(Login log) {
@@ -53,8 +53,8 @@ public class Logic {
 
     }
 
-    public List<Message> getMsgs(String s, int n) {
-        MessagesRequest req = new MessagesRequest(s, n);
+    public List<Message> getMsgs(String s, int n, boolean c) {
+        MessagesRequest req = new MessagesRequest(s, n,c, currentUser.getNome());
         return cl.sendMsgRequest(req);
     }
 

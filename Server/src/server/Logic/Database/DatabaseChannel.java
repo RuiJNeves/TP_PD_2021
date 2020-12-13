@@ -7,6 +7,7 @@ package server.Logic.Database;
 
 import Features.Channel;
 import java.sql.*;
+import java.util.ArrayList;
 /**
  *
  * @author ruizi
@@ -39,6 +40,43 @@ public class DatabaseChannel {
         String sql = "SELECT TOP 1 * FROM Channel WHERE Name = \"" + s + "\";";
         ResultSet r = stmt.executeQuery(sql);
         int ret =  Integer.parseInt(r.getArray(0).toString());
+        r.close();
+        return ret;
+    }
+
+    public static ArrayList<String> getInfo() throws SQLException, ClassNotFoundException {
+        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+        String sql = "SELECT* FROM Channel;";
+        ResultSet r = stmt.executeQuery(sql);
+        ArrayList<String> ret = new ArrayList<>();
+        while(r.next()){
+           
+            String s = "id: "+ r.getInt(1)+" Nome: " + r.getString(2) + "Descricao: ";
+            r.getString(3);
+            s = s + r.getString(4);
+            ret.add(s);
+        }
+        r.close();
+        return ret;
+    }
+
+    public static ArrayList<String> getStats(int id) throws SQLException, ClassNotFoundException {
+        Statement stmt = DBConnection.getCon().getConnection().createStatement();
+        String sqlUsers = "SELECT COUNT(*) FROM Channel_has_User WHERE idChannel = " + id + ";";
+        ResultSet r = stmt.executeQuery(sqlUsers);
+        int users = r.getInt(1);
+        r.close();
+        String sqlFiles = "SELECT COUNT(*) FROM SentFileChannel WHERE idChannel = " + id + ";";
+        r = stmt.executeQuery(sqlFiles);
+        int files = r.getInt(1);
+        r.close();
+        String sqlMsgs = "SELECT COUNT(*) FROM SentMessageChannel WHERE idChannel = " + id + ";";
+        r = stmt.executeQuery(sqlFiles);
+        int msgs = r.getInt(1);
+        ArrayList<String> ret = new ArrayList<>(3);
+        ret.add(("Utilizadores: " + users));
+        ret.add(("Mensagens: " + msgs));
+        ret.add(("Ficheiros: " + files));
         r.close();
         return ret;
     }
