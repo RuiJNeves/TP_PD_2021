@@ -34,7 +34,7 @@ public class MulticastReceiver extends Thread{
     protected ISendable sendable;
     protected MulticastSocket s = null;
     protected boolean running;
-    protected InetAddress addr
+    protected InetAddress addr;
     
     public MulticastReceiver(MulticastSocket s, Server server, InetAddress addr){
         this.s = s;

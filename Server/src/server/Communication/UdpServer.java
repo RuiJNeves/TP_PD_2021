@@ -11,7 +11,10 @@ import java.io.ObjectOutputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketException;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import server.Logic.ListServer;
 import server.Logic.Server;
 
@@ -81,6 +84,12 @@ public class UdpServer extends Thread{
             
         }catch(NumberFormatException e){
             System.out.println("O porto de escuta deve ser um inteiro positivo.");
+        } catch (SocketException ex) {
+            Logger.getLogger(UdpServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(UdpServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ClassNotFoundException ex) {
+            Logger.getLogger(UdpServer.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
      
