@@ -5,6 +5,8 @@
  */
 package server.Logic.Database;
 
+import java.sql.*;
+import Features.*;
 /**
  *
  * @author Hugo
@@ -12,32 +14,30 @@ package server.Logic.Database;
 public class DataBaseMessage {
     
 
-    public void create(Message txt){
+    public void create(Message txt) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
         stmt = DBConnection.getCon().getConnection().createStatement();
         Date date = new Date();
         String sql = "Insert Into Message(Text, Date)"
-                    + "Values (\"" + txt.getMessage() + "\", "+ date + ");");
+                    + "Values (\"" + txt.getMessage() + "\", "+ date + ");";
 
         stmt.executeQuery(sql);
     }
     
-    public void delete(int id){
+    public void delete(int id) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
         stmt = DBConnection.getCon().getConnection().createStatement();
-        Date date = new Date();
         String sql = "Delete from Message "
                     + "Where idMessage="+ id +";";
 
         stmt.executeQuery(sql);
     }
     
-    public void update(Message txt){
+    public void update(Message txt) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
         stmt = DBConnection.getCon().getConnection().createStatement();
-        Date date = new Date();
         String sql = "Update Message "
-                    + "Set Text=\""+ txt.getMessage()"\", Date="+ date+" "
+                    + "Set Text=\""+ txt.getMessage()+"\", "
                     + "Where idMessage="+ txt.getId() + ";";
 
         stmt.executeQuery(sql);

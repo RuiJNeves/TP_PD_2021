@@ -5,17 +5,19 @@
  */
 package server.Logic.Database;
 
+import java.sql.*;
+import Features.*;
+
 /**
  *
  * @author Hugo
  */
 public class DataBaseSentMessageChannel {
-    public void create(User user, Channel channel, Message txt){
+    public void create(User user, Channel channel, Message txt) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
         stmt = DBConnection.getCon().getConnection().createStatement();
-        Date date = new Date();
         String sql = "Insert Into SentMessageChannel(idUser, idChannel, idMessage)"
-                    + "Values (" + user.getId() + ", "+ channel.getId() +", "+ txt.getId() + ");");
+                    + "Values (" + user.getId() + ", "+ channel.getId() +", "+ txt.getId() + ");";
 
         stmt.executeQuery(sql);
     }
