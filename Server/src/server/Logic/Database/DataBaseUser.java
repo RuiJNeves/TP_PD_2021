@@ -47,7 +47,9 @@ public class DataBaseUser {
         Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "SELECT TOP 1 * FROM User WHERE Name = \"" + s + "\";";
         ResultSet r = stmt.executeQuery(sql);
-        int ret =  Integer.parseInt(r.getArray(0).toString());
+        int ret = -1;
+        while(r.next())
+         ret =  r.getInt(1);
         r.close();
         return ret;
     }

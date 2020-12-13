@@ -40,7 +40,9 @@ public class DatabaseChannel {
         Statement stmt = DBConnection.getCon(bd).getConnection().createStatement();
         String sql = "SELECT TOP 1 * FROM Channel WHERE Name = \"" + s + "\";";
         ResultSet r = stmt.executeQuery(sql);
-        int ret =  Integer.parseInt(r.getArray(0).toString());
+        int ret = -1;
+        while(r.next())
+            ret = r.getInt(1);
         r.close();
         return ret;
     }
@@ -53,7 +55,6 @@ public class DatabaseChannel {
         while(r.next()){
            
             String s = "id: "+ r.getInt(1)+" Nome: " + r.getString(2) + "Descricao: ";
-            r.getString(3);
             s = s + r.getString(4);
             ret.add(s);
         }

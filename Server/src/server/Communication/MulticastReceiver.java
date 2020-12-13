@@ -158,12 +158,16 @@ public class MulticastReceiver extends Thread{
             else
                 rcv = DataBaseUser.getUserByName(m.getUsernameRecive(),bd);
             snd = DataBaseUser.getUserByName(m.getUsernameSend(),bd);
-            DatabaseSentMessageUser.insert(m, snd, rcv,bd);
             
-            
-            MulticastSender ms = new MulticastSender(null, m, s );
-            ms.run();
-            return true;
+            if(rcv != -1){
+                DatabaseSentMessageUser.insert(m, snd, rcv,bd);
+
+
+                MulticastSender ms = new MulticastSender(null, m, s );
+                ms.run();
+                return true;
+            }
+            return false;
         } catch (SQLException | ClassNotFoundException ex) {
             return false;
         }

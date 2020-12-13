@@ -27,8 +27,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import server.Logic.Database.DataBaseFile;
 import server.Logic.Database.DataBaseMessage;
 import server.Logic.Database.DataBaseSentFileUser;
