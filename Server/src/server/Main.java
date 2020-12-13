@@ -6,11 +6,11 @@ package server;
  * and open the template in the editor.
  */
 
-import java.net.*;
-import server.Communication.TcpFileHandler;
-import java.sql.*;
-import server.Logic.Database.DBConnection;
-import server.Logic.Server;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import server.Logic.Start;
 
 
 /**
@@ -20,11 +20,21 @@ import server.Logic.Server;
 public class Main {
     
     public static final int MAX_SIZE = 1000;
-    public Start start;
+    static Start start;
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args){
-        start = new Start();
+        InetAddress addr;
+        try {
+            addr = InetAddress.getByName(args[2]);
+            int i = Integer.parseInt(args[1]);
+            start = new Start(i, addr);
+            //start.work();
+            
+        } catch (UnknownHostException ex) {
+            Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
     }
 }
