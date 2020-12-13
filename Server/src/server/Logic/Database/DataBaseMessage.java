@@ -7,6 +7,7 @@ package server.Logic.Database;
 
 import java.sql.*;
 import Features.*;
+import java.time.LocalDate;
 /**
  *
  * @author Hugo
@@ -17,7 +18,7 @@ public class DataBaseMessage {
     public void create(Message txt) throws SQLException, ClassNotFoundException{
         Statement stmt = null;
         stmt = DBConnection.getCon().getConnection().createStatement();
-        Date date = new Date();
+        LocalDate date = LocalDate.now();
         String sql = "Insert Into Message(Text, Date)"
                     + "Values (\"" + txt.getMessage() + "\", "+ date + ");";
 
