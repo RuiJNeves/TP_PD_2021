@@ -67,7 +67,7 @@ public class UdpServer extends Thread{
                 
                 if(receivedMsg.equals("connect")){
                     ListServer.ordena();
-                    if((ListServer.listServer.get(0).getNumberClientes() * 100 / server.getNumberClientes())  < 50){
+                    if(!ListServer.listServer.isEmpty() && (ListServer.listServer.get(0).getNumberClientes() * 100 / server.getNumberClientes())  < 50){
                         
                         HashMap map = new HashMap<InetAddress, Integer>();
                         for( Server s : ListServer.listServer){

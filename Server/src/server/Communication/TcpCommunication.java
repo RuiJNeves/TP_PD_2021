@@ -41,7 +41,7 @@ import server.Logic.Database.DatabaseSentMessageUser;
  *
  * @author Hugo
  */
-public class TcpCommunication  implements Runnable{
+public class TcpCommunication  extends Thread{
     public static final int MAX_SIZE = 256;
     private int listeningPort;
     private InetAddress bd;

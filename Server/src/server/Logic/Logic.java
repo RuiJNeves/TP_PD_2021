@@ -29,9 +29,9 @@ public class Logic {
         String s;
         c.prepare();
         c.start();
-        //executart comms logic
-        
-        while((s = scanner.nextLine()).equalsIgnoreCase("shutdown")){
+        System.out.println("Running");
+        while(!((s = scanner.nextLine()).equalsIgnoreCase("shutdown"))){
+          
             if(s.equalsIgnoreCase("Clients")){
                 System.out.println(c.getUsers());
             }

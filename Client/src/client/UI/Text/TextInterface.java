@@ -190,6 +190,9 @@ public class TextInterface {
         System.out.println("Register");
         System.out.println("Username: ");
         String nome = readString();
+        while(nome.length() == 0)
+            nome = readString();
+        
         System.out.println("Password: ");
         String pass = readString();
         System.out.println("Email:");

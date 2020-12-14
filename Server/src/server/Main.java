@@ -28,12 +28,11 @@ public class Main {
     public static void main(String[] args){
         InetAddress db;
         try {
-            int udp_port = Integer.parseInt(args[2]);
-            db = InetAddress.getByName(args[3]);
-            int tcp_port = Integer.parseInt(args[1]);
+            int udp_port = Integer.parseInt(args[1]);
+            db = InetAddress.getByName(args[2]);
+            int tcp_port = Integer.parseInt(args[0]);
             logic = new Logic(tcp_port, udp_port, db);
             logic.work();
-            
         } catch (UnknownHostException ex) {
         }
         

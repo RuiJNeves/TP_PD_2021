@@ -5,6 +5,7 @@
  */
 package Helpers;
 
+import java.io.Serializable;
 import java.net.InetAddress;
 import java.util.HashMap;
 
@@ -12,7 +13,7 @@ import java.util.HashMap;
  *
  * @author ruizi
  */
-public class ConnectionResponse {
+public class ConnectionResponse implements Serializable {
     
     private boolean resp;
     private HashMap<InetAddress, Integer> serverList;

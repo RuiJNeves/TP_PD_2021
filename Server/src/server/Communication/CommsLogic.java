@@ -62,18 +62,23 @@ public class CommsLogic {
     }
     
     public void start(){
-        server_udp.run();
-        tcp_comms.run();
-        m_receiver.run();
+        server_udp.setDaemon(true);
+        server_udp.start();
+        tcp_comms.setDaemon(true);
+        tcp_comms.start();
+        m_receiver.setDaemon(true);
+        m_receiver.start();
     }
     
     public void finish(){
         try {
-            server_udp.terminate();
-            tcp_comms.terminate();
-            m_receiver.terminate();
+//            server_udp.terminate();
+//            tcp_comms.terminate();
+//            m_receiver.terminate();
             
-            socket.close();
+            
+            if(socket != null)
+                socket.close();
             
         } catch (IOException ex) {
         }
